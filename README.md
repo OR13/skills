@@ -37,19 +37,13 @@ interruption. If nothing needs your input, zero.
 
 ## The part nobody mentions
 
-Some harnesses let a skill opt out of model invocation. It is a sensible option
-for an interactive workflow you would always start yourself, and it has a
-consequence that is easy to miss: **the agent cannot see that skill either, so
-it never reminds you the skill exists.**
+A skill can opt out of model invocation. That hides it from the agent too, so it
+never suggests the skill or reminds you it exists — and planning skills are
+usually the ones marked this way. **The tools that would help you frame the work
+are the ones your agent cannot mention.**
 
-Planning skills tend to be marked this way, because they are exactly that kind
-of workflow. So the tools that would help you frame the work are the ones your
-agent is structurally unable to suggest. You install a good planning pack, use
-it twice, and forget it.
-
-one-shot is model-invocable on purpose. It is the one skill your agent can reach
-that knows to look for the ones it cannot, and to hand the keyboard back when
-one of them fits better than anything it could do itself.
+one-shot is model-invocable on purpose: it looks for the hidden ones, and hands
+you the keyboard when one fits better than anything it could do itself.
 
 ## Install
 
