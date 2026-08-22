@@ -5,7 +5,7 @@ license: Apache-2.0
 metadata:
   author: Orie Steele
   version: "3.0.0"
-  homepage: https://github.com/OR13/one-shot
+  homepage: https://github.com/OR13/skills
 ---
 
 # One-Shot

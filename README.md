@@ -1,4 +1,8 @@
-# one-shot
+# skills
+
+Orie Steele's agent skills. One so far.
+
+## one-shot
 
 **There are more good ways to point an agent at a problem than anyone has time
 to keep up with.** Fan out to subagents, or one worktree per task. Write a spec
@@ -56,12 +60,12 @@ folder is the same everywhere. Only the path changes.**
 ### Any Agent Skills harness
 
 ```bash
-git clone https://github.com/OR13/one-shot.git
-ln -s "$PWD/one-shot/skills/one-shot" ~/.claude/skills/one-shot      # Claude Code
-ln -s "$PWD/one-shot/skills/one-shot" ~/.codex/skills/one-shot       # Codex
-ln -s "$PWD/one-shot/skills/one-shot" ~/.config/opencode/skills/one-shot
-ln -s "$PWD/one-shot/skills/one-shot" ~/.gemini/skills/one-shot
-ln -s "$PWD/one-shot/skills/one-shot" ~/.cursor/skills/one-shot
+git clone https://github.com/OR13/skills.git or13-skills
+ln -s "$PWD/or13-skills/skills/one-shot" ~/.claude/skills/one-shot      # Claude Code
+ln -s "$PWD/or13-skills/skills/one-shot" ~/.codex/skills/one-shot       # Codex
+ln -s "$PWD/or13-skills/skills/one-shot" ~/.config/opencode/skills/one-shot
+ln -s "$PWD/or13-skills/skills/one-shot" ~/.gemini/skills/one-shot
+ln -s "$PWD/or13-skills/skills/one-shot" ~/.cursor/skills/one-shot
 ```
 
 A symlink means `git pull` updates every harness at once.
@@ -69,8 +73,8 @@ A symlink means `git pull` updates every harness at once.
 ### Claude Code, as a plugin
 
 ```
-/plugin marketplace add OR13/one-shot
-/plugin install orie@one-shot
+/plugin marketplace add OR13/skills
+/plugin install orie@or13-skills
 ```
 
 The plugin is named `orie` after its author, the same way `mattpocock-skills`

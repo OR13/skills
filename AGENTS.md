@@ -8,8 +8,12 @@ any [Agent Skills](https://agentskills.io) harness.
 
 ## What this repo is
 
-One skill. It routes a problem to the right agentic pattern, and its whole
-premise is that an agent cannot see every skill installed on the machine.
+A skills pack, published as the plugin `orie` so its skills reach a session as
+`/orie:<name>`. One skill so far: `one-shot`, which chooses how to attack a
+problem instead of defaulting to doing it inline.
+
+Adding a skill means one new directory under `skills/`, named the same as its
+`name:` field, and one row in the README. Nothing else.
 
 ## Rules for changing it
 
