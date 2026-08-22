@@ -35,16 +35,6 @@ interruption. If nothing needs your input, zero.
 4. **Stops once**, and only if it needs something you must type, or the plan crosses a line you drew.
 5. **Runs to the end.**
 
-## The part nobody mentions
-
-A skill can opt out of model invocation. That hides it from the agent too, so it
-never suggests the skill or reminds you it exists — and planning skills are
-usually the ones marked this way. **The tools that would help you frame the work
-are the ones your agent cannot mention.**
-
-one-shot is model-invocable on purpose: it looks for the hidden ones, and hands
-you the keyboard when one fits better than anything it could do itself.
-
 ## Install
 
 A skill is a folder with a `SKILL.md`. Every harness below reads that same
