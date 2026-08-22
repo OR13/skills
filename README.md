@@ -99,22 +99,22 @@ skills/one-shot/
 └── references/packs.md   which packs are worth having
 ```
 
-## Dependencies
+## Recommended skills
 
-**None required.** one-shot works alone; it just has less to point at.
+one-shot is a router, and a router is worth more the better its destinations.
+None of these are required; without them it has less to point at.
 
-The packs that make it worth having are in
-[`references/packs.md`](skills/one-shot/references/packs.md), with what each adds
-and how to judge one you find elsewhere. Short version:
+[`references/packs.md`](skills/one-shot/references/packs.md) covers what each
+adds and how to judge one you find elsewhere.
 
 | Pack | Why |
 |---|---|
 | [superpowers](https://github.com/obra/superpowers) | The execution skills. Install this first. |
 | [mattpocock-skills](https://github.com/anthropics/claude-plugins-official) | The planning flow, and most of it is invisible to your agent. |
-| [impeccable](https://github.com/pbakaus/impeccable) | Frontend design. Optional, UI projects only. |
-| [cmux-skills](https://github.com/manaflow-ai/cmux-skills) | Driving agents in panes you can watch. Optional. |
+| [impeccable](https://github.com/pbakaus/impeccable) | Frontend design. UI projects only. |
+| [cmux-skills](https://github.com/manaflow-ai/cmux-skills) | Driving agents in panes you can watch. |
 
-None are vendored here. one-shot points at them.
+Nothing here is vendored. one-shot links to them under their own licenses.
 
 ## License
 
