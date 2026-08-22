@@ -28,11 +28,11 @@ the same ground:
 **[mattpocock-skills](https://github.com/anthropics/claude-plugins-official)**,
 in Anthropic's official directory — 34k stars for the directory.
 
-This is the pack that makes one-shot necessary. It ships its planning flow as
-skills the model cannot invoke: `to-spec`, `to-tickets`, `implement`,
+This is the pack that shows the problem most clearly. It ships its planning flow
+as skills the model cannot invoke: `to-spec`, `to-tickets`, `implement`,
 `wayfinder`, `triage`, `ask-matt`, `grill-with-docs`. An agent cannot see or
-suggest any of them. Run `scripts/blind-spots.sh` after installing and they all
-appear.
+suggest any of them, so after installing this pack your agent gets a planning
+workflow it will never once mention to you.
 
 Also ships `grilling`, `tdd`, `code-review`, `research`, `diagnosing-bugs` and
 others as normal model-invocable skills.
@@ -104,6 +104,6 @@ including Codex, Gemini CLI, Cursor, Copilot, VS Code, opencode, Goose, and Amp.
 A skill is a folder with a `SKILL.md`, so the same folder works everywhere.
 
 The gap is model-invocation gating. `disable-model-invocation` is a Claude Code
-field, not part of the standard, so the same pack can have blind spots on one
-harness and none on another. That is why `scripts/blind-spots.sh` probes the
-filesystem instead of trusting a list.
+field, not part of the standard, so the same pack can be fully visible on one
+harness and half-hidden on another. That is why one-shot checks the frontmatter
+on the machine it is running on rather than trusting a list written here.
