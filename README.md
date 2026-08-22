@@ -103,6 +103,7 @@ adds and how to judge one you find elsewhere.
 | [mattpocock-skills](https://github.com/anthropics/claude-plugins-official) | The planning flow, and most of it is invisible to your agent. |
 | [impeccable](https://github.com/pbakaus/impeccable) | Frontend design. UI projects only. |
 | [cmux-skills](https://github.com/manaflow-ai/cmux-skills) | Driving agents in panes you can watch. |
+| [gitkb](https://github.com/gitkb/gitkb-releases) | Call-graph code intelligence, and tasks that outlive a session. |
 
 Nothing here is vendored. one-shot links to them under their own licenses.
 

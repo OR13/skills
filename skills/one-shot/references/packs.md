@@ -51,6 +51,28 @@ npx skills add manaflow-ai/cmux-skills -g --all
 
 Third-party repackagings exist as plugin marketplaces. Prefer the authors' repo.
 
+## gitkb
+
+[gitkb/gitkb-releases](https://github.com/gitkb/gitkb-releases) — MIT.
+
+```bash
+brew install gitkb/tap/gitkb
+git-kb init
+```
+
+Distributed as a CLI, not a skills repo: `git-kb init` writes eighteen skills
+into `.kb/skills/` and symlinks them into `.claude/skills/`, so they are
+per-project and arrive with an MCP server holding the matching tools.
+
+Two groups. **Code intelligence** reads the AST and call graph instead of
+grepping text: `explore`, `understand`, `code-intelligence`, `refactor-safety`.
+Reach for these when scoping a problem, and for blast radius before changing a
+shared signature. **Knowledge base** tracks work across sessions: `kb-tasks`,
+`kb-start`, `kb-progress`, `kb-close`, `kb-handoff`, and others.
+
+Relevant to step 1. Where superpowers helps execute a plan, this helps establish
+whether the problem is one problem, and whether it has been worked before.
+
 ## Judging a pack you find elsewhere
 
 - **Published by whoever builds the thing it wraps.** A stranger's repackaging
