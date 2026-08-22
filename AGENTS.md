@@ -37,11 +37,28 @@ Adding a skill means one new directory under `skills/`, named the same as its
 - **Point at packs, never vendor them.** `references/packs.md` links to other
   people's work under their own licenses.
 
+## Bump the version for every content change
+
+Plugin updates are keyed on the version in `.claude-plugin/`, not on the commit.
+Ship a doc fix without bumping and `claude plugin update` answers "already at
+the latest version" while serving the old files. Bump `plugin.json`,
+`marketplace.json` and `SKILL.md`'s `metadata.version` together; they are
+asserted to match below.
+
 ## Verify a change
 
 ```bash
 skills-ref validate skills/one-shot      # frontmatter and naming
 test ! -e skills/one-shot/scripts        # no executables ship here
+
+python3 - <<'V'                          # the three versions agree
+import json, re
+a = json.load(open(".claude-plugin/plugin.json"))["version"]
+b = json.load(open(".claude-plugin/marketplace.json"))["plugins"][0]["version"]
+c = re.search(r'version: "(.*)"', open("skills/one-shot/SKILL.md").read()).group(1)
+assert a == b == c, (a, b, c)
+print("versions agree:", a)
+V
 ```
 
 ## Voice
