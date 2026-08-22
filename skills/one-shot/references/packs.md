@@ -1,109 +1,74 @@
-# Packs worth installing
+# Recommended packs
 
-One-shot is a router. A router is worth having when there is somewhere good to
-route to. These are public, reputable, and verified by reading their repositories
-rather than by reading articles about them. Star counts were checked on
-2026-08-22.
+Where one-shot routes to. None are vendored here; each links to its own repo
+under its own license.
 
-Nothing here is vendored into this repo. One-shot points at these packs; it does
-not redistribute them.
+## superpowers
 
-## The execution pack
+[obra/superpowers](https://github.com/obra/superpowers) — MIT.
 
-**[obra/superpowers](https://github.com/obra/superpowers)** — 276k stars, MIT.
-Fourteen skills covering TDD, systematic debugging, brainstorming, writing plans,
-subagent-driven development, git worktrees, and verification before completion.
+Fourteen skills: TDD, systematic debugging, brainstorming, writing and executing
+plans, subagent-driven development, git worktrees, code review, verification
+before completion. All model-invocable, so none are hidden.
 
-Install this. It is the single biggest upgrade available, and one-shot is a
-complement to it rather than a rival: every superpowers skill is model-invocable,
-so none of them is a blind spot. Two are worth knowing because one-shot routes to
-the same ground:
+Two matter for choosing an approach:
 
-- `dispatching-parallel-agents` — blind spot two, in-session.
-- `using-git-worktrees` — blind spot two, out-of-session. One-shot points here
-  instead of owning the mechanics.
+- `dispatching-parallel-agents` — fanning out in-session.
+- `using-git-worktrees` — fanning out to separate sessions.
 
-## The planning pack
+Route to these rather than describing the mechanics yourself.
 
-**[mattpocock-skills](https://github.com/anthropics/claude-plugins-official)**,
-in Anthropic's official directory — 34k stars for the directory.
+## mattpocock-skills
 
-This is the pack that shows the problem most clearly. It ships its planning flow
-as skills the model cannot invoke: `to-spec`, `to-tickets`, `implement`,
-`wayfinder`, `triage`, `ask-matt`, `grill-with-docs`. An agent cannot see or
-suggest any of them, so after installing this pack your agent gets a planning
-workflow it will never once mention to you.
+In [Anthropic's official directory](https://github.com/anthropics/claude-plugins-official).
 
-Also ships `grilling`, `tdd`, `code-review`, `research`, `diagnosing-bugs` and
-others as normal model-invocable skills.
+Most of its planning flow is hidden from the model: `to-spec`, `to-tickets`,
+`implement`, `wayfinder`, `triage`, `ask-matt`, `grill-with-docs`. Name the one
+that fits and let the operator type it.
 
-## The design pack
+Visible as normal skills: `grilling`, `tdd`, `code-review`, `research`,
+`diagnosing-bugs`.
 
-**[pbakaus/impeccable](https://github.com/pbakaus/impeccable)** — 62k stars.
-Frontend design quality: craft, critique, polish, audit, plus an
-anti-pattern CLI. Optional, and only earns its place on projects with a UI.
+## impeccable
 
-No license file at the time of writing. That does not affect pointing at it, but
-check before vendoring anything from it.
+[pbakaus/impeccable](https://github.com/pbakaus/impeccable).
 
-## The terminal pack
+Frontend design: craft, critique, polish, audit, plus an anti-pattern CLI. Only
+earns its place on projects with a UI. Ships no license file.
 
-**[manaflow-ai/cmux-skills](https://github.com/manaflow-ai/cmux-skills)** — MIT,
-from the cmux authors, synced from the main repo. Eight skills for driving
-[cmux](https://github.com/manaflow-ai/cmux), a macOS terminal built for running
-several coding agents at once: `cmux-cli`, `cmux-workspace`, `cmux-browser`,
-`cmux-config`, `cmux-ref`, `cmux-artifact`, `cmux-sidebar-builder`,
-`cmux-freestyle`.
+## cmux-skills
 
-Relevant to blind spot two. If you run agents in panes you can watch, these are
-the mechanics of the out-of-session half, the same way superpowers'
-`using-git-worktrees` is the mechanics of isolation. One-shot decides *whether*
-to spawn; these decide *how*.
+[manaflow-ai/cmux-skills](https://github.com/manaflow-ai/cmux-skills) — MIT,
+from the cmux authors.
 
-Installed with the skills CLI rather than a plugin marketplace:
+Eight skills for driving [cmux](https://github.com/manaflow-ai/cmux), a terminal
+built for running several agents at once. Relevant when fanning out to separate
+sessions the operator wants to watch.
 
 ```bash
 npx skills add manaflow-ai/cmux-skills -g --all
 ```
 
-Third-party repackagings of these skills exist as Claude Code marketplaces.
-Prefer the source: it is the authors' own repo, it is MIT, and it is the one
-that gets the weekly sync.
+Third-party repackagings exist as plugin marketplaces. Prefer the authors' repo.
 
-## Adjacent, and how to judge one
+## Judging a pack you find elsewhere
 
-The packs above are the ones I use. The ecosystem is large and mostly unvetted,
-so here is the filter rather than a longer list:
-
-- **Published by whoever builds the thing it wraps.** A cmux pack from manaflow,
-  a Next.js pack from Vercel. A stranger's repackaging of someone else's skills
-  is a supply-chain risk for no gain.
-- **Has a license file.** Several popular packs do not. That is fine for
-  installing, and a problem the moment you copy anything out.
+- **Published by whoever builds the thing it wraps.** A stranger's repackaging
+  of someone else's skills is a supply-chain risk for no gain.
+- **Has a license file.** Fine to install without one; a problem the moment you
+  copy anything out.
 - **Recently updated.** A skill encodes a CLI's surface, and CLIs move.
-- **Read the SKILL.md before installing.** Skills run with full agent
-  permissions. The install is the trust decision.
-- **Count the always-on cost.** Every model-invocable skill's description sits
-  in context on every turn, forever. `claude plugin details <name>` prints the
-  number. Fourteen skills you never use is a permanent tax.
+- **Read the SKILL.md first.** Skills run with full agent permissions, so
+  installing one is the trust decision.
+- **Count the always-on cost.** Every visible skill's description sits in
+  context on every turn. `claude plugin details <name>` prints the number.
 
-Two useful catalogues for looking: [`npx skills find`](https://github.com/vercel-labs/skills)
-searches the ecosystem interactively, and the index below is hand-curated.
+To search: `npx skills find`. To browse:
+[awesome-claude-code](https://github.com/hesreallyhim/awesome-claude-code).
 
-## The index
+## Gating is not part of the standard
 
-**[hesreallyhim/awesome-claude-code](https://github.com/hesreallyhim/awesome-claude-code)**
-— 53k stars. The curated list. Where to look when none of the above fits, and
-where to submit a plugin so people find it.
-
-## What the format buys you
-
-Every pack above uses [Agent Skills](https://agentskills.io), an open format
-originally from Anthropic and now supported by roughly forty-five harnesses,
-including Codex, Gemini CLI, Cursor, Copilot, VS Code, opencode, Goose, and Amp.
-A skill is a folder with a `SKILL.md`, so the same folder works everywhere.
-
-The gap is model-invocation gating. `disable-model-invocation` is a Claude Code
-field, not part of the standard, so the same pack can be fully visible on one
-harness and half-hidden on another. That is why one-shot checks the frontmatter
-on the machine it is running on rather than trusting a list written here.
+`disable-model-invocation` is a Claude Code field. [Agent
+Skills](https://agentskills.io) has no equivalent, so the same pack can be fully
+visible on one harness and half-hidden on another. Check the machine you are
+running on rather than trusting this file.
