@@ -1,0 +1,10 @@
+{
+  "name": "one-shot",
+  "description": "Route one problem to the right agentic pattern, take one approval, run to the end. Finds the skills your agent cannot see and names them at the moment they apply.",
+  "version": "2.0.0",
+  "author": { "name": "Orie Steele" },
+  "homepage": "https://github.com/OR13/one-shot",
+  "repository": "https://github.com/OR13/one-shot",
+  "license": "Apache-2.0",
+  "keywords": ["skills", "routing", "planning", "orchestration", "agent-skills", "portable"]
+}

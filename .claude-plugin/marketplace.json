@@ -1,0 +1,14 @@
+{
+  "name": "one-shot",
+  "description": "The one-shot router skill.",
+  "owner": { "name": "Orie Steele" },
+  "plugins": [
+    {
+      "name": "one-shot",
+      "description": "Route one problem to the right agentic pattern, take one approval, run to the end. Finds the skills your agent cannot see and names them at the moment they apply.",
+      "version": "2.0.0",
+      "source": "./",
+      "author": { "name": "Orie Steele" }
+    }
+  ]
+}
