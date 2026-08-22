@@ -70,8 +70,13 @@ A symlink means `git pull` updates every harness at once.
 
 ```
 /plugin marketplace add OR13/one-shot
-/plugin install one-shot@one-shot
+/plugin install orie@one-shot
 ```
+
+The plugin is named `orie` after its author, the same way `mattpocock-skills`
+is, so the skill reads `/orie:one-shot` rather than stuttering as
+`one-shot:one-shot`. Installed as a plain skill folder instead, it is just
+`/one-shot`.
 
 The `.claude-plugin/` manifests are a distribution wrapper, not a dependency.
 Delete them and the skill still works everywhere via the folder above.

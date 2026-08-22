@@ -1,7 +1,7 @@
 {
-  "name": "one-shot",
-  "description": "Choose how to attack a problem, take one approval, then run to the end. A router for the agentic patterns and skills you cannot keep up with.",
-  "version": "3.0.0",
+  "name": "orie",
+  "description": "Orie Steele's agent skills. one-shot: choose how to attack a problem, take one approval, then run to the end.",
+  "version": "4.0.0",
   "author": {
     "name": "Orie Steele"
   },
