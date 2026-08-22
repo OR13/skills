@@ -94,6 +94,7 @@ with what each one adds and why. Short version:
 | [superpowers](https://github.com/obra/superpowers) | The execution skills. Install this first. |
 | [mattpocock-skills](https://github.com/anthropics/claude-plugins-official) | The planning flow, and the reason one-shot exists: most of it is hidden from the model. |
 | [impeccable](https://github.com/pbakaus/impeccable) | Frontend design. Optional, UI projects only. |
+| [cmux-skills](https://github.com/manaflow-ai/cmux-skills) | Driving agents in cmux panes. Optional, the out-of-session half of blind spot two. |
 
 None are vendored here. One-shot points at them.
 

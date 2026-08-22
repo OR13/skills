@@ -46,6 +46,50 @@ anti-pattern CLI. Optional, and only earns its place on projects with a UI.
 No license file at the time of writing. That does not affect pointing at it, but
 check before vendoring anything from it.
 
+## The terminal pack
+
+**[manaflow-ai/cmux-skills](https://github.com/manaflow-ai/cmux-skills)** — MIT,
+from the cmux authors, synced from the main repo. Eight skills for driving
+[cmux](https://github.com/manaflow-ai/cmux), a macOS terminal built for running
+several coding agents at once: `cmux-cli`, `cmux-workspace`, `cmux-browser`,
+`cmux-config`, `cmux-ref`, `cmux-artifact`, `cmux-sidebar-builder`,
+`cmux-freestyle`.
+
+Relevant to blind spot two. If you run agents in panes you can watch, these are
+the mechanics of the out-of-session half, the same way superpowers'
+`using-git-worktrees` is the mechanics of isolation. One-shot decides *whether*
+to spawn; these decide *how*.
+
+Installed with the skills CLI rather than a plugin marketplace:
+
+```bash
+npx skills add manaflow-ai/cmux-skills -g --all
+```
+
+Third-party repackagings of these skills exist as Claude Code marketplaces.
+Prefer the source: it is the authors' own repo, it is MIT, and it is the one
+that gets the weekly sync.
+
+## Adjacent, and how to judge one
+
+The packs above are the ones I use. The ecosystem is large and mostly unvetted,
+so here is the filter rather than a longer list:
+
+- **Published by whoever builds the thing it wraps.** A cmux pack from manaflow,
+  a Next.js pack from Vercel. A stranger's repackaging of someone else's skills
+  is a supply-chain risk for no gain.
+- **Has a license file.** Several popular packs do not. That is fine for
+  installing, and a problem the moment you copy anything out.
+- **Recently updated.** A skill encodes a CLI's surface, and CLIs move.
+- **Read the SKILL.md before installing.** Skills run with full agent
+  permissions. The install is the trust decision.
+- **Count the always-on cost.** Every model-invocable skill's description sits
+  in context on every turn, forever. `claude plugin details <name>` prints the
+  number. Fourteen skills you never use is a permanent tax.
+
+Two useful catalogues for looking: [`npx skills find`](https://github.com/vercel-labs/skills)
+searches the ecosystem interactively, and the index below is hand-curated.
+
 ## The index
 
 **[hesreallyhim/awesome-claude-code](https://github.com/hesreallyhim/awesome-claude-code)**
