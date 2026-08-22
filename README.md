@@ -53,42 +53,45 @@ one of them fits better than anything it could do itself.
 
 ## Install
 
-one-shot is an [Agent Skills](https://agentskills.io) folder — an open format,
-originally from Anthropic, supported by roughly forty-five harnesses. **The
-folder is the same everywhere. Only the path changes.**
-
-### Any Agent Skills harness
+A skill is a folder with a `SKILL.md`. Every harness below reads that same
+folder; only the path differs.
 
 ```bash
 git clone https://github.com/OR13/skills.git or13-skills
-ln -s "$PWD/or13-skills/skills/one-shot" ~/.claude/skills/one-shot      # Claude Code
-ln -s "$PWD/or13-skills/skills/one-shot" ~/.codex/skills/one-shot       # Codex
-ln -s "$PWD/or13-skills/skills/one-shot" ~/.config/opencode/skills/one-shot
-ln -s "$PWD/or13-skills/skills/one-shot" ~/.gemini/skills/one-shot
-ln -s "$PWD/or13-skills/skills/one-shot" ~/.cursor/skills/one-shot
+SKILL="$PWD/or13-skills/skills/one-shot"
 ```
 
-A symlink means `git pull` updates every harness at once.
-
-### Claude Code, as a plugin
+### Claude Code
 
 ```
 /plugin marketplace add OR13/skills
 /plugin install orie@or13-skills
 ```
 
-The plugin is named `orie` after its author, the same way `mattpocock-skills`
-is, so the skill reads `/orie:one-shot` rather than stuttering as
-`one-shot:one-shot`. Installed as a plain skill folder instead, it is just
-`/one-shot`.
+Reaches a session as `/orie:one-shot`. Or skip the plugin and symlink it, which
+gives you a bare `/one-shot`:
 
-The `.claude-plugin/` manifests are a distribution wrapper, not a dependency.
-Delete them and the skill still works everywhere via the folder above.
+```bash
+ln -s "$SKILL" ~/.claude/skills/one-shot
+```
 
-### Per-project
+### Antigravity CLI
 
-Commit the folder to `.agents/skills/one-shot/` or `.claude/skills/one-shot/`
-and it applies only there.
+Reads `.agents/skills/` in the project, and cannot read a Claude Code plugin, so
+the folder is the only route:
+
+```bash
+ln -s "$SKILL" .agents/skills/one-shot
+```
+
+### opencode
+
+```bash
+ln -s "$SKILL" ~/.config/opencode/skills/one-shot   # global
+ln -s "$SKILL" .opencode/skills/one-shot            # or per-project
+```
+
+A symlink means `git pull` in the clone updates every harness at once.
 
 ## What you are installing
 
@@ -118,16 +121,6 @@ and how to judge one you find elsewhere. Short version:
 | [cmux-skills](https://github.com/manaflow-ai/cmux-skills) | Driving agents in panes you can watch. Optional. |
 
 None are vendored here. one-shot points at them.
-
-## Portability
-
-The skill names no vendor. It says "the harness", "subagents", "worktrees".
-Frontmatter is strictly the Agent Skills spec: `name`, `description`, `license`,
-`metadata`. No vendor extensions. Validate with:
-
-```bash
-skills-ref validate skills/one-shot
-```
 
 ## License
 
