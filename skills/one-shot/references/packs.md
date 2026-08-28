@@ -18,6 +18,11 @@ Two matter for choosing an approach:
 
 Route to these rather than describing the mechanics yourself.
 
+`dispatching-parallel-agents` covers the mechanics: deciding whether domains are
+independent, issuing dispatches so they run concurrently, and integrating
+returns. Worker briefing is covered in [`dispatch.md`](dispatch.md). Read both
+before a fan-out.
+
 ## mattpocock-skills
 
 In [Anthropic's official directory](https://github.com/anthropics/claude-plugins-official).

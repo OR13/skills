@@ -4,7 +4,7 @@ description: "One shot a problem: choose how to attack it, take one approval, th
 license: Apache-2.0
 metadata:
   author: Orie Steele
-  version: "4.1.0"
+  version: "4.2.0"
   homepage: https://github.com/OR13/skills
 ---
 
@@ -47,27 +47,28 @@ Five lines, no more:
 - **Problem** — the one sentence from step 1.
 - **Approach** — which of the four, and the one reason it beat the others.
 - **Steps** — what runs, in order or in parallel.
-- **Verification** — how the result gets checked, and by whom.
+- **Verification** — how the result gets checked, and by whom. Name a check
+  that can fail, like a test command or assertion.
 - **Operator input** — anything only the operator can type, or nothing.
 
 ### 4. Take the stop, once
 
-Two conditions earn a stop:
+Five minutes to write a plan is worth thirty minutes of wasted work. Stop, show
+the plan, and ask for one approval:
 
-- The plan needs a skill you cannot invoke. Only the operator can run it.
-- The plan publishes something, spends money, touches a credential, or crosses a
-  boundary the operator set.
+> `plan.md` is ready. Shall I execute it?
 
-Either one: show the plan, name exactly what you need, and wait.
+Do not start until the operator answers. If they ask for changes, update the
+plan and ask once more. If they approve, proceed immediately without further
+stops.
 
-Neither one: state the plan in two lines and start. Zero stops is the good
-outcome. Every extra question spends the attention the operator came here to
-save.
-
-### 5. Run to the end
+### 5. Execute and report
 
 Execute the plan, verify as planned, and report once when finished. Done when
 every step has run and the verification has passed.
+
+When using either fan-out approach, write each worker's brief before dispatching
+any of them. See below.
 
 ## Skills you cannot invoke
 
@@ -96,14 +97,53 @@ Default to in-session. Separate sessions cost the operator a thing to watch, so
 spend that only when the work runs tens of minutes, when they want to follow it
 on their own schedule, or when one stuck worker must not freeze the rest.
 
+## Briefing a worker
+
+A worker inherits none of your session. Whatever you leave out of its brief, it
+invents. Include five fields in every brief:
+
+- **Scope.** What it may read, what it may write, what it may call, and what is
+  off limits. A worker with unbounded access fixes the file next to the one you
+  meant.
+- **Hunt for.** The specific failures to look for, named by you. This field
+  decides whether you get a review or a text search. A worker told to "check the
+  error handling" greps for `catch` and reports the count. A worker told to look
+  for swallowed exceptions, retry loops with no ceiling, and cleanup that only
+  runs on the success path has to read the code to answer.
+- **Must hold.** Constraints a check can fail. "No public signature changes"
+  passes or fails cleanly. Unfalsifiable constraints like "keep it maintainable"
+  provide no boundary.
+- **Return.** The exact shape of the answer. Prose is fine for one worker. At
+  three or more you are merging results, so fix the fields and their order or
+  you will spend your own context reconciling four essays.
+- **Order.** Which phase this worker belongs to, when the work is phased. Settle
+  the phase order before dispatch rather than during result review.
+
+You cannot fill in **Hunt for** from a standing start. If you cannot name the
+failures, you are not ready to dispatch, and the fix is to read enough of the
+code yourself to name three.
+
+Field detail, return shapes, and the critic pass:
+[`references/dispatch.md`](references/dispatch.md).
+
 ## When one shot is the wrong shape
 
 - **Contradictory requirements.** Two specs that cannot both hold. Write the
-  contradiction down and hand it over. One shot chooses an approach; it does not
-  settle conflicts of authority.
-- **A single lookup.** One search, one API call, one file read. Just do it.
-
-## Building instead of running
+  conflict down in one sentence and ask the operator which wins before
+  planning.
+- **Novel research.** When the work is finding out what is true rather than
+  applying what is known. State what question needs answering first.
+- **Tasks that are really loops.** "Do this for each repo in the org." Run one,
+  verify it, and only then script the loop.
 
 Three runs at the same task means the task wants a tool. Say so once the run is
 finished, rather than turning this one into that.
+
+For a fan-out, that tool is an agent definition: the same five fields written to
+a file the harness loads, instead of retyped into a prompt each time. Lifespan is
+the difference that matters. A brief is discarded, while a definition gets read,
+edited, and maintained.
+
+Repetition triggers a definition. Defining an agent for a one-off task creates
+maintenance overhead without reuse. Writing one:
+[`references/dispatch.md`](references/dispatch.md).
