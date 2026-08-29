@@ -4,7 +4,7 @@ description: "One shot a problem: choose how to attack it, take one approval, th
 license: Apache-2.0
 metadata:
   author: Orie Steele
-  version: "4.1.0"
+  version: "4.3.0"
   homepage: https://github.com/OR13/skills
 ---
 
@@ -12,6 +12,11 @@ metadata:
 
 Take one problem. Choose how to attack it. Run one attempt that finishes it,
 spending at most **one stop** of the operator's attention.
+
+In prompt engineering, "one-shot" means providing a single demonstration
+example. In this skill, **one-shot execution** means single-checkpoint task
+delegation: choosing the approach, taking one approval gate, and running
+straight to completion without conversational thrash.
 
 The operator is not asking you to be careful. They are asking you to pick well,
 because picking well is now a specialist job they do not have time to do. Your
@@ -47,27 +52,28 @@ Five lines, no more:
 - **Problem** — the one sentence from step 1.
 - **Approach** — which of the four, and the one reason it beat the others.
 - **Steps** — what runs, in order or in parallel.
-- **Verification** — how the result gets checked, and by whom.
+- **Verification** — how the result gets checked, and by whom. Name a check
+  that can fail, like a test command or assertion.
 - **Operator input** — anything only the operator can type, or nothing.
 
 ### 4. Take the stop, once
 
-Two conditions earn a stop:
+Five minutes to write a plan is worth thirty minutes of wasted work. Stop, show
+the plan, and ask for one approval:
 
-- The plan needs a skill you cannot invoke. Only the operator can run it.
-- The plan publishes something, spends money, touches a credential, or crosses a
-  boundary the operator set.
+> `plan.md` is ready. Shall I execute it?
 
-Either one: show the plan, name exactly what you need, and wait.
+Do not start until the operator answers. If they ask for changes, update the
+plan and ask once more. If they approve, proceed immediately without further
+stops.
 
-Neither one: state the plan in two lines and start. Zero stops is the good
-outcome. Every extra question spends the attention the operator came here to
-save.
-
-### 5. Run to the end
+### 5. Execute and report
 
 Execute the plan, verify as planned, and report once when finished. Done when
 every step has run and the verification has passed.
+
+When using either fan-out approach, write each worker's brief before dispatching
+any of them. See below.
 
 ## Skills you cannot invoke
 
@@ -96,14 +102,51 @@ Default to in-session. Separate sessions cost the operator a thing to watch, so
 spend that only when the work runs tens of minutes, when they want to follow it
 on their own schedule, or when one stuck worker must not freeze the rest.
 
+## Briefing a worker
+
+A worker inherits none of your session. Whatever you leave out of its brief, it
+invents. Structure every worker prompt around five fields:
+
+- **Scope.** Context and tool bounding. Define what it may read, what it may
+  write, what it may call, and what is explicitly off limits.
+- **Hunt for.** Failure mode enumeration. Name the specific failure patterns
+  to find. A worker told to "audit error handling" greps for `catch` blocks; a
+  worker told to look for unhandled promise rejections, swallowed errors, and
+  missing retry ceilings must reason about code paths.
+- **Must hold.** Verifiable invariants and guardrails. State assertions that a
+  check can falsify.
+- **Return.** Structured output schema. Define the exact markdown fields and an
+  explicit empty-state response (e.g. `NO_FINDINGS_DETECTED`) to prevent
+  hallucinated findings.
+- **Order.** Execution topology and dependency staging. Settle phase sequence
+  before dispatching concurrent workers.
+
+You cannot fill in **Hunt for** from a standing start. If you cannot name the
+failures, you are not ready to dispatch, and the fix is to read enough of the
+code yourself to name three.
+
+Field detail, return schemas, and the critic pass:
+[`references/dispatch.md`](references/dispatch.md).
+
 ## When one shot is the wrong shape
 
 - **Contradictory requirements.** Two specs that cannot both hold. Write the
-  contradiction down and hand it over. One shot chooses an approach; it does not
-  settle conflicts of authority.
-- **A single lookup.** One search, one API call, one file read. Just do it.
-
-## Building instead of running
+  conflict down in one sentence and ask the operator which wins before
+  planning.
+- **Novel research.** When the work is finding out what is true rather than
+  applying what is known. State what question needs answering first.
+- **Tasks that are really loops.** "Do this for each repo in the org." Run one,
+  verify it, and only then script the loop.
 
 Three runs at the same task means the task wants a tool. Say so once the run is
 finished, rather than turning this one into that.
+
+For a fan-out, that tool is an agent definition: the same five fields written to
+a file the harness loads, instead of retyped into a prompt each time. Lifespan is
+the difference that matters. A brief is discarded, while a definition gets read,
+edited, and maintained.
+
+Repetition triggers a definition. Defining an agent for a one-off task creates
+maintenance overhead without reuse. Writing one:
+[`references/dispatch.md`](references/dispatch.md).
+
