@@ -4,7 +4,7 @@ description: "One shot a problem: choose how to attack it, take one approval, th
 license: Apache-2.0
 metadata:
   author: Orie Steele
-  version: "4.2.0"
+  version: "4.3.0"
   homepage: https://github.com/OR13/skills
 ---
 
@@ -12,6 +12,11 @@ metadata:
 
 Take one problem. Choose how to attack it. Run one attempt that finishes it,
 spending at most **one stop** of the operator's attention.
+
+In prompt engineering, "one-shot" means providing a single demonstration
+example. In this skill, **one-shot execution** means single-checkpoint task
+delegation: choosing the approach, taking one approval gate, and running
+straight to completion without conversational thrash.
 
 The operator is not asking you to be careful. They are asking you to pick well,
 because picking well is now a specialist job they do not have time to do. Your
@@ -100,30 +105,27 @@ on their own schedule, or when one stuck worker must not freeze the rest.
 ## Briefing a worker
 
 A worker inherits none of your session. Whatever you leave out of its brief, it
-invents. Include five fields in every brief:
+invents. Structure every worker prompt around five fields:
 
-- **Scope.** What it may read, what it may write, what it may call, and what is
-  off limits. A worker with unbounded access fixes the file next to the one you
-  meant.
-- **Hunt for.** The specific failures to look for, named by you. This field
-  decides whether you get a review or a text search. A worker told to "check the
-  error handling" greps for `catch` and reports the count. A worker told to look
-  for swallowed exceptions, retry loops with no ceiling, and cleanup that only
-  runs on the success path has to read the code to answer.
-- **Must hold.** Constraints a check can fail. "No public signature changes"
-  passes or fails cleanly. Unfalsifiable constraints like "keep it maintainable"
-  provide no boundary.
-- **Return.** The exact shape of the answer. Prose is fine for one worker. At
-  three or more you are merging results, so fix the fields and their order or
-  you will spend your own context reconciling four essays.
-- **Order.** Which phase this worker belongs to, when the work is phased. Settle
-  the phase order before dispatch rather than during result review.
+- **Scope.** Context and tool bounding. Define what it may read, what it may
+  write, what it may call, and what is explicitly off limits.
+- **Hunt for.** Failure mode enumeration. Name the specific failure patterns
+  to find. A worker told to "audit error handling" greps for `catch` blocks; a
+  worker told to look for unhandled promise rejections, swallowed errors, and
+  missing retry ceilings must reason about code paths.
+- **Must hold.** Verifiable invariants and guardrails. State assertions that a
+  check can falsify.
+- **Return.** Structured output schema. Define the exact markdown fields and an
+  explicit empty-state response (e.g. `NO_FINDINGS_DETECTED`) to prevent
+  hallucinated findings.
+- **Order.** Execution topology and dependency staging. Settle phase sequence
+  before dispatching concurrent workers.
 
 You cannot fill in **Hunt for** from a standing start. If you cannot name the
 failures, you are not ready to dispatch, and the fix is to read enough of the
 code yourself to name three.
 
-Field detail, return shapes, and the critic pass:
+Field detail, return schemas, and the critic pass:
 [`references/dispatch.md`](references/dispatch.md).
 
 ## When one shot is the wrong shape
@@ -147,3 +149,4 @@ edited, and maintained.
 Repetition triggers a definition. Defining an agent for a one-off task creates
 maintenance overhead without reuse. Writing one:
 [`references/dispatch.md`](references/dispatch.md).
+

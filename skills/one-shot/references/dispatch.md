@@ -7,25 +7,42 @@ definition writes those same five fields to a file the harness loads every time.
 Start with the brief every time. Promote it to a definition only after writing
 the same brief three times.
 
+## Terminology: execution vs in-context learning
+
+In machine learning and prompt engineering literature, **one-shot prompting**
+means providing a single demonstration example (exemplar) in the context window
+before asking for a completion.
+
+In this skill, **one-shot execution** refers to single-checkpoint task
+delegation: choosing an approach, taking at most one human approval gate, and
+running autonomously to completion without conversational thrash.
+
 ## The five fields
+
+Structuring worker prompts around five core context engineering components
+prevents drift and makes dispatches reproducible.
 
 ### Scope
 
-What the worker may read, what it may write, what it may call, and what is off
-limits. Write all four. A worker given a goal and no boundary will fix the
-neighbouring file, rename something you depend on, or start a server.
+Context and tool bounding: what the worker may read, write, call, and what is
+off limits.
 
-State the out-of-bounds list explicitly rather than assuming it follows from the
-in-bounds list. "Read `src/queue/`, edit only `src/queue/`, do not touch the
-migration files or the CI config" is a scope. "Work on the queue" is a wish.
+State both positive permissions and explicit negative boundaries. A worker
+given a goal without explicit boundaries will edit adjacent files, modify shared
+interfaces, or invoke destructive tools.
+
+"Read `src/queue/`, edit only `src/queue/`, do not touch migration files or CI
+config" provides a bounded context. "Work on the queue" is an unconstrained
+prompt.
 
 ### Hunt for
 
-The specific failures to look for, named by you.
+Failure mode enumeration: the specific failure patterns to look for, named by
+you.
 
-This is the field that decides whether you get a review or a text search, and it
-is the one most often left out. A worker with a goal and no named failures falls
-back to pattern matching, because pattern matching always returns something.
+This field separates reasoned analysis from superficial text search. A worker
+instructed to "audit error handling" defaults to grepping for `catch` blocks and
+reporting syntax counts.
 
 Compare:
 
@@ -33,121 +50,108 @@ Compare:
 
 against:
 
-> In `src/jobs/`, look for three things. Handlers that are not safe to run
-> twice on the same input. Retry paths with no attempt ceiling and no place a
-> permanently failing job comes to rest. Work started inside a request handler
-> that outlives the request.
+> In `src/jobs/`, check for three specific failure modes:
+> 1. Handlers that are not idempotent when retried on identical input.
+> 2. Retry paths lacking an attempt ceiling or dead-letter destination.
+> 3. Asynchronous work initiated within a request handler that outlives the
+> request lifecycle.
 
-The second one cannot be answered by grep. It forces the worker to read the code
-and reason about it, which is what you were paying for.
+The second prompt requires semantic reasoning over the code.
 
-You cannot fill this field in from a standing start. If you cannot name three
-failures, you do not yet understand the problem well enough to delegate it, and
-the fix is to go read enough of the code yourself to name them.
+You cannot draft this field from a standing start. If you cannot name three
+concrete failure modes, inspect the code first before delegating.
 
 ### Must hold
 
-Constraints a check can fail.
+Verifiable invariants and guardrails: constraints a check can falsify.
 
-The test is simple: could a result be shown to violate this? "No public function
-signature changes" passes the test. A phrase like "follows the existing
-conventions" cannot be tested. An unfalsifiable constraint is an absent
-constraint, and the worker will report compliance every time.
+A constraint must be testable against execution output or diffs. "Public
+function signatures remain unchanged" is falsifiable. "Follows existing
+conventions" is subjective and unfalsifiable; workers will report compliance
+regardless of output.
 
-Useful shapes: a command that must still exit zero, a file that must not appear
-in the diff, a count that must not increase, a runtime ceiling.
+Effective invariant shapes: a command that must exit zero, specific files
+forbidden from appearing in the diff, a metric ceiling, or a runtime threshold.
 
 ### Return
 
-The exact shape of the answer.
+Structured output schema: the exact shape and field schema of the response.
 
-For one or two workers, prose is fine and cheaper. At three or more you become
-the thing merging the results, and unstructured returns spend your context on
-reconciliation instead of judgement. Fix the fields and their order so the
-returns stack.
+Unstructured prose increases context reconciliation costs during fan-outs.
+Enforce a uniform markdown schema so downstream synthesis is mechanical.
 
-A shape that works for review work:
+A standard schema for review findings:
 
 ```markdown
 ### <short title>
 - **Location:** path, with line numbers
 - **What is wrong:** one sentence
-- **Why it matters:** the failure it causes, not a restatement
-- **Proposed change:** specific enough to disagree with
-- **How to check it:** the command or assertion that would catch a regression
+- **Why it matters:** the specific failure mode triggered
+- **Proposed change:** concrete patch or replacement
+- **How to check it:** command or assertion that verifies the fix
 ```
 
-Two rules regardless of shape. Say what an empty result looks like, or workers
-will manufacture findings to avoid returning nothing. Say what goes in each
-field, or "Why it matters" will come back as "this is bad practice".
+Specify the empty-state contract explicitly: state what to return if no issues
+are found (e.g., "Return `NO_FINDINGS_DETECTED`"). Without an explicit null
+case, workers often hallucinate findings to satisfy the output schema.
 
 ### Order
 
-Which phase the worker belongs to, when the work is phased.
+Execution topology and dependency staging.
 
-Phasing is worth it when a later phase would otherwise invalidate an earlier
-one: writing the interface down before implementing it, or writing the check
-before the change it checks. Settle the order before dispatch, because
-reordering during result review discards work.
+When tasks are interdependent, define phase ordering before dispatch. Staging
+interface design before implementation, or test creation before code
+modification, prevents downstream rework.
 
-This skill does not own your phase order. Your project has a rule about it
-already. Name that rule in the plan so every worker reads the same one.
+Name the ordering constraint in the plan so every concurrent worker shares the
+same dependency model.
 
-## The critic pass
+## The critic pass (Evaluator-Optimizer)
 
-Run one worker whose only job is to reject.
+Deploy a dedicated evaluation worker whose sole directive is verification and
+pruning.
 
-**When.** Three or more workers proposing changes, or any single proposal you
-cannot check mechanically. Below that it is ceremony: read the two results
-yourself.
+**When to use.** Three or more workers proposing changes, or any complex
+proposal requiring non-mechanical verification. Below that threshold, review the
+diffs directly.
 
-**What it hunts for.** Over-engineering has recognisable shapes, so name them.
-An abstraction with exactly one implementation. A layer that only forwards
-calls. A configuration option nobody will set. A public surface widened to serve
-one private caller. A change that cannot be undone in one commit.
+**Target failure modes.** Identify common over-engineering patterns:
+abstractions with single implementations, passthrough layers, unused
+configuration knobs, broadened public API surface for a single consumer, or
+changes that cannot be reverted in a single commit.
 
-**What it must hold.** The critic gets a falsifiable constraint of its own: it
-must name at least one thing it would cut, and say what breaks if the cut is
-wrong. A critic that returns approval without a candidate for deletion has
-failed its dispatch.
+**Falsifiable invariant.** The critic must name at least one candidate for
+deletion and state what breaks if the deletion is incorrect. A critic return
+that approves everything without scrutiny fails its contract.
 
-**Where it should come from.** If a review skill is already installed, route to
-it instead of describing a reviewer from scratch. The named failure list and
-deletion requirement drive the review regardless of worker persona.
+**Skill routing.** If a dedicated code review skill is installed, route to it
+rather than synthesizing a reviewer prompt.
 
 ## Promoting a brief to a definition
 
-Same five fields, different home and different lifespan.
+The same five fields apply whether prompting a transient subagent or persisting
+a reusable agent definition.
 
-Promote only after writing the exact brief three times.
+Promote a brief to a definition only after running the same brief three times.
 
-**What changes when it goes in a file.**
+**Definition considerations:**
 
-- It gains a name and a description. The description is what the harness matches
-  against when choosing, so write retrieval text for harness routing rather than
-  a summary for a human reader.
-- **Scope stops being advice and becomes mechanical.** Most harnesses let a
-  definition carry a tool allowlist, and the portable spelling in the
-  [Agent Skills](https://agentskills.io/specification) frontmatter is
-  `allowed-tools`. A boundary the harness enforces is worth more than a
-  paragraph asking politely. Put the boundary there and keep the prose version
-  too, so a reader knows why.
-- **It starts costing something on every turn.** A definition the harness lists
-  for selection spends its description continuously, whether or not it is ever
-  chosen. This is the same economics as a skill. Unused definitions consume
-  context on every turn; delete definitions that are no longer chosen.
-- **It has no tests.** Nothing fails when a definition goes stale, and it will
-  go stale, because it encodes paths and tool names that move. The only thing
-  keeping it true is somebody reading it, so review it when you touch the code
-  it describes.
+- **Routing metadata:** Provide a descriptive name and summary. The harness uses
+  this text for semantic routing and tool selection.
+- **Enforced tool bounding:** Use harness-level tool allowlists (such as
+  `allowed-tools` in Agent Skills frontmatter) to enforce operational boundaries
+  mechanically rather than relying solely on prompt instructions.
+- **Context overhead:** Installed agent definitions consume context budget
+  across turns. Prune unused definitions periodically.
+- **Maintenance:** Agent definitions contain paths and tool names that drift
+  over time. Treat definitions like code: review them when refactoring related
+  subsystems.
 
-**Keep it narrow.** A definition that matches everything gets selected for
-everything, and then it is a second general assistant with a worse prompt. If
-you cannot say what it should *not* be picked for, it is not ready.
+**Keep scope narrow.** A definition with overly broad matching criteria acts as
+an unspecialized assistant with degraded prompt efficiency.
 
-**Where definitions live varies by harness.** Harnesses may read
-`.claude/agents/<name>.md`, `.agents/<name>.md`, or have no definition support.
-Check the local harness configuration rather than assuming a universal path.
+**Harness storage.** Definitions typically live in `.claude/agents/<name>.md` or
+`.agents/<name>.md`. Consult local harness documentation for the exact path.
 
 ---
 
