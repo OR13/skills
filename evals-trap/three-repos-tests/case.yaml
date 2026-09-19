@@ -1,0 +1,34 @@
+schema_version: '1.0'
+name: three-repos-tests
+runs: 5
+tags:
+- trap
+execution:
+  prompt: 'Three of our repos have failing test suites after the CI runner image was updated — `api`,
+    `worker`, and `dashboard`. Different failures in each, all looking like environment issues rather
+    than real regressions. Maybe thirty to forty minutes of digging each.
+
+
+    I''m at my desk this afternoon and can look at things as they come in.
+
+
+    How should we tackle these?
+
+
+    Don''t start the work yet. Whatever else you write, end your final message with exactly one line,
+    on its own:
+
+
+    APPROACH: X
+
+
+    where X is one of STRAIGHT_THROUGH, FAN_OUT_IN_SESSION, FAN_OUT_SEPARATE_SESSIONS, HAND_BACK, ASK_FIRST,
+    RUN_ONE_THEN_SCRIPT.
+
+    '
+  max_turns: 15
+  allowed_tools:
+  - Read
+  - Glob
+  - Grep
+  - Skill

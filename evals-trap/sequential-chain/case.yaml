@@ -1,0 +1,35 @@
+schema_version: '1.0'
+name: sequential-chain
+runs: 5
+tags:
+- trap
+execution:
+  prompt: 'Adding a `tenant_id` column end to end: a database migration, then the ORM model, then the
+    API serialisers that expose it, then the generated TypeScript client, then the two frontend screens
+    that filter by it.
+
+
+    Each layer won''t compile until the one below it is done — the ORM model needs the column, the serialiser
+    needs the model field, the client is generated from the serialiser''s schema.
+
+
+    Four or five distinct areas of the codebase. How should we attack it?
+
+
+    Don''t start the work yet. Whatever else you write, end your final message with exactly one line,
+    on its own:
+
+
+    APPROACH: X
+
+
+    where X is one of STRAIGHT_THROUGH, FAN_OUT_IN_SESSION, FAN_OUT_SEPARATE_SESSIONS, HAND_BACK, ASK_FIRST,
+    RUN_ONE_THEN_SCRIPT.
+
+    '
+  max_turns: 15
+  allowed_tools:
+  - Read
+  - Glob
+  - Grep
+  - Skill

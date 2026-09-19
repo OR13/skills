@@ -1,0 +1,32 @@
+schema_version: '1.0'
+name: vague-goal
+runs: 5
+tags:
+- trap
+execution:
+  prompt: 'The API feels slow and I want it faster. Customers have mentioned it a couple of times.
+
+
+    It''s a Node service in front of Postgres, maybe 30 endpoints. We don''t have tracing set up.
+
+
+    How should we approach this?
+
+
+    Don''t start the work yet. Whatever else you write, end your final message with exactly one line,
+    on its own:
+
+
+    APPROACH: X
+
+
+    where X is one of STRAIGHT_THROUGH, FAN_OUT_IN_SESSION, FAN_OUT_SEPARATE_SESSIONS, HAND_BACK, ASK_FIRST,
+    RUN_ONE_THEN_SCRIPT.
+
+    '
+  max_turns: 15
+  allowed_tools:
+  - Read
+  - Glob
+  - Grep
+  - Skill
