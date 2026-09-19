@@ -1,0 +1,35 @@
+schema_version: '1.0'
+name: major-bump-away
+runs: 5
+tags:
+- trap
+execution:
+  prompt: 'Four separate repos need to go from React 17 to React 19. Breaking changes in each — the test
+    suites will need real work to go green again, and two of them use enzyme which has to come out entirely.
+    Probably three hours a repo, maybe more.
+
+
+    I''m travelling tomorrow and will be checking in from my phone between things. If one of them goes
+    badly I don''t want it holding up the other three.
+
+
+    How should we set this up?
+
+
+    Don''t start the work yet. Whatever else you write, end your final message with exactly one line,
+    on its own:
+
+
+    APPROACH: X
+
+
+    where X is one of STRAIGHT_THROUGH, FAN_OUT_IN_SESSION, FAN_OUT_SEPARATE_SESSIONS, HAND_BACK, ASK_FIRST,
+    RUN_ONE_THEN_SCRIPT.
+
+    '
+  max_turns: 15
+  allowed_tools:
+  - Read
+  - Glob
+  - Grep
+  - Skill
