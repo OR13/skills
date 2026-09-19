@@ -25,9 +25,12 @@ Adding a skill means one new directory under `skills/`, named the same as its
   `name`, `description`, `license`, `compatibility`, `metadata`, `allowed-tools`.
   A field outside that list breaks a harness somewhere. Client-specific values
   go under `metadata`.
-- **Ship no executables.** The repo is markdown only, and the README says so as
-  its security story. A skill runs with the agent's full permissions, so asking
-  a stranger to run a bundled script as step one is the wrong first impression.
+- **Ship no executables.** Nothing installable runs on its own, and the README
+  says so as its security story. A skill runs with the agent's full permissions,
+  so asking a stranger to run a bundled script as step one is the wrong first
+  impression. `evals/` (yaml and markdown) and `.github/workflows/` are repo
+  infrastructure, not part of what a user installs, and they stay script-free
+  too.
   Anything the skill needs discovered, it discovers with the agent's own tools.
 - **Lead with the human problem, not the mechanism.** The reason this exists is
   that choosing an agentic approach has become a specialist job. The
@@ -46,6 +49,18 @@ the latest version" while serving the old files. Bump `plugin.json`,
 asserted to match below.
 
 ## Verify a change
+
+CI runs the eval gate on any change to `skills/`, `evals/` or `.claude-plugin/`.
+It is a merge gate, so a change that degrades the skill's behaviour fails the PR.
+Run it locally before pushing if the change touches the skill body:
+
+```bash
+claude plugin eval . --eval-dir evals --tag ci --ablation none \
+  --trust-plugin --no-publish --threshold 1.0
+```
+
+About $1.60 and eight minutes. [`evals/README.md`](evals/README.md) explains what
+each case guards and why the graders are regexes rather than model judgements.
 
 ```bash
 skills-ref validate skills/one-shot      # frontmatter and naming

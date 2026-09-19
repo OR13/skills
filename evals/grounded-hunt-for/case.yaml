@@ -1,0 +1,58 @@
+schema_version: '1.0'
+name: grounded-hunt-for
+runs: 1
+execution:
+  prompt: '(These files are not on disk in this session — treat the listing below as the repo.)
+
+
+    Three separate incidents last quarter in this payments service: a double refund,
+
+    a webhook processed twice after a provider retry, and a settlement batch that
+
+    never finished. Nobody has audited these paths together and there is no spec for
+
+    what correct looks like.
+
+
+    ```
+
+    src/payments/charge.py      charge(card_token, amount, idempotency_key), replays on seen key
+
+    src/payments/refund.py      refund(charge_id, amount): SELECT existing, else INSERT. No unique constraint.
+
+    src/payments/webhooks.py    handle(event): processes immediately; provider retries redeliver event
+    ids
+
+    src/jobs/settlement.py      run_nightly(): loops all pending rows, no batching, no ceiling
+
+    tests/test_charge_idempotency.py            asserts same key charges once
+
+    tests/test_webhook_replay_rejected.py       asserts a replayed event id is rejected
+
+    tests/test_settlement_drains_under_backpressure.py   asserts settlement finishes in budget
+
+    docs/adr/0007-exactly-once-webhooks.md      "handlers MUST be idempotent, keyed on provider event
+    id"
+
+    docs/adr/0012-no-blocking-io-in-handlers.md
+
+    .github/workflows/ci.yml                    45s timeout on the settlement test
+
+    ```
+
+
+    This is tangled and I''m not sure which approach fits, or whether it''s even one
+
+    job. Work out how to attack it and show me the plan and the worker briefs. Don''t
+
+    dispatch anything yet.
+
+    '
+  max_turns: 15
+  allowed_tools:
+  - Read
+  - Glob
+  - Grep
+  - Skill
+tags:
+- ci

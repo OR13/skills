@@ -1,0 +1,43 @@
+schema_version: '1.0'
+name: thin-grounding
+runs: 1
+execution:
+  prompt: '(These files are not on disk in this session — treat the listing below as the repo.)
+
+
+    This library is meant to implement the W3C Verifiable Credentials Data Model
+
+    2.0, but it was started last month and I don''t trust that it conforms.
+
+
+    ```
+
+    src/issue.ts     issue(claims, key) -> spreads claims into a @context''d object
+
+    src/verify.ts    verify(vc) -> returns true
+
+    src/types.ts     type VC = { "@context": string[]; type?: string[]; issuer?: string }
+
+    README.md        one paragraph, links to the VCDM 2.0 spec
+
+    ```
+
+
+    That is the whole repo: no tests, no ADRs, no CI.
+
+
+    I''m not sure how to tackle this or which pattern fits — there isn''t much in the
+
+    repo to review against and no spec of our own. Work out the approach and show me
+
+    the brief you''d hand a reviewing agent. Don''t dispatch it yet.
+
+    '
+  max_turns: 15
+  allowed_tools:
+  - Read
+  - Glob
+  - Grep
+  - Skill
+tags:
+- ci

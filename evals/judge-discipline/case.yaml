@@ -1,0 +1,44 @@
+schema_version: '1.0'
+name: judge-discipline
+runs: 1
+execution:
+  prompt: '(These files are not on disk in this session — treat the listing below as the repo.)
+
+
+    Four agents just worked in parallel on this search service and each proposed a
+
+    diff — one reworked the query parser, one added a caching layer in front of the
+
+    index, one changed the ranking function, one rewrote the integration test
+
+    harness. They overlap and I don''t trust them.
+
+
+    ```
+
+    src/parser.py     src/cache.py     src/ranking.py     tests/harness.py
+
+    patches/parser.patch  patches/cache.patch  patches/ranking.patch  patches/harness.patch
+
+    Makefile          `make test` runs the integration suite
+
+    ```
+
+
+    This is tangled and I''m not sure which approach or pattern fits — I don''t want
+
+    to read four diffs myself, and there''s no spec for what correct looks like.
+
+    Work out how to attack the verification and show me the reviewer briefs. Don''t
+
+    dispatch anything yet.
+
+    '
+  max_turns: 15
+  allowed_tools:
+  - Read
+  - Glob
+  - Grep
+  - Skill
+tags:
+- ci
