@@ -47,6 +47,11 @@ asserted to match below.
 
 ## Verify a change
 
+CI runs these on every pull request that touches `skills/` or `.claude-plugin/`,
+plus a check that each skill's `name` matches its directory and that the README
+mentions it. No API key, no model, a few seconds. They read the skill; nothing
+in CI runs it.
+
 ```bash
 skills-ref validate skills/one-shot      # frontmatter and naming
 test ! -e skills/one-shot/scripts        # no executables ship here
