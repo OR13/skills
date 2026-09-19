@@ -15,8 +15,10 @@ The companion's `PROTOCOL.md` was committed before task execution. Its v2 and v3
 amendments were each committed before their corresponding runs; the original
 protocols and unsuccessful trials are preserved. The pilot freezes one-shot
 4.3.0 from main, model `claude-sonnet-5`, medium effort, one repetition per arm,
-and a fixed randomized schedule. This branch bumps the pack to 4.3.1 for
-documentation only; its skill body is unchanged.
+and a fixed randomized schedule. That pilot bumped the pack to 4.3.1 for
+documentation only. The subsequent 4.6.0 candidate is described in
+[skill-review.md](skill-review.md) and tested under HARD-PROTOCOL.md in the
+companion repository.
 
 Both arms have the same tools, task, and fresh fixture. The v3 treatment includes
 the exact frozen skill body in the prompt, with a copy of its references
@@ -80,7 +82,9 @@ Total reported cost including setup probes and unsuccessful attempts was about
 $0.82. These are CLI-reported costs, not a billing reconciliation.
 
 This establishes that the benchmark executes and checks real work. It does not
-establish a skill advantage. The skill body remains behaviorally unchanged.
+establish a skill advantage. That documentation-only pilot did not change the
+skill body; the later 4.6.0 revision and harder comparison are recorded in
+[skill-review.md](skill-review.md).
 
 This small development pilot can establish that execution and grading work.
 It cannot establish that one-shot improves general task performance. Automatic

@@ -14,8 +14,8 @@ become a specialist skill, and it is not the skill most people are trying to
 practise. They have a problem and want it handled well the first time.
 
 one-shot is the skill that makes that choice. Give it a problem: it picks the
-approach, writes a five-line plan, asks you **once** if it needs anything, and
-runs to the end.
+approach, asks for missing decisions together when needed, and carries the work
+through verification.
 
 ## Why one shot
 
@@ -24,16 +24,18 @@ execution of the wrong approach: forty minutes of careful work in one session on
 something that wanted five parallel workers, or an elaborate fan-out for
 something that wanted one search.
 
-The name is the promise. One problem in, one considered attempt out, at most one
-interruption. If nothing needs your input, zero.
+The name is the aim. One problem in, one considered attempt out, with no
+interruption when the agent has what it needs. Investigation and corrections
+are part of that attempt. A new blocker is reported, never concealed to keep
+the count down.
 
 ## What it does
 
-1. **Confirms it is one problem.** If not, it names the parts and recommends which to run first.
-2. **Weighs four approaches** — hand back to you, fan out in-session, fan out to separate sessions, or straight through. Most sessions default to the last without weighing the others. That is the failure this exists to stop.
-3. **Writes a five-line plan** — problem, approach, steps, verification, what it needs from you.
-4. **Stops once**, and only if it needs something you must type, or the plan crosses a line you drew.
-5. **Runs to the end.**
+1. **Establishes the outcome** from your request and the relevant artifacts.
+2. **Chooses an approach** — direct work, workers in-session, separate sessions, or a fitting installed workflow.
+3. **Plans in proportion to the task**, with ownership for shared work and checks for completion.
+4. **Batches missing decisions** and proceeds under authorization already given.
+5. **Integrates and verifies**, correcting failures within scope and reporting remaining limitations.
 
 ## Install
 
@@ -119,6 +121,11 @@ The runnable benchmark lives in a separate local companion, `../one-shot-bench`,
 so installing this pack still ships only markdown. See
 [`benchmarks/execution.md`](benchmarks/execution.md) for the protocol, commands,
 and recorded results. The companion has not been published.
+
+The [4.6.0 review](benchmarks/skill-review.md) records the harder three-arm
+comparison: revised skill 12/12, original 10/12, no skill 12/12, plus 3/3 revised
+regressions. This supports a narrow improvement over the original, not an
+advantage over no skill or a general one-shot guarantee.
 
 ## License
 

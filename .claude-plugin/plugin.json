@@ -1,7 +1,7 @@
 {
   "name": "orie",
-  "description": "Orie Steele's agent skills. one-shot: choose how to attack a problem, take one approval, then run to the end.",
-  "version": "4.3.1",
+  "description": "Orie Steele's agent skills. one-shot: choose an approach, finish the task, and verify the outcome with minimal operator input.",
+  "version": "4.6.0",
   "author": {
     "name": "Orie Steele"
   },
