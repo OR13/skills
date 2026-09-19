@@ -79,14 +79,16 @@ A symlink means `git pull` in the clone updates every harness at once.
 
 ## What you are installing
 
-Two markdown files. No scripts, no install step, no network calls, nothing that
-runs on its own. Read both before you install; they are short, and skills run
+Three markdown files. No scripts, no install step, no network calls, nothing that
+runs on its own. Read them before you install; they are short, and skills run
 with your agent's full permissions, so reading them is the whole security model.
 
 ```
 skills/one-shot/
-├── SKILL.md              the routine, ~110 lines
-└── references/packs.md   which packs are worth having
+├── SKILL.md                 the routine
+└── references/
+    ├── dispatch.md          briefing and reviewing workers
+    └── packs.md             which packs are worth having
 ```
 
 ## Recommended skills
@@ -106,6 +108,17 @@ adds and how to judge one you find elsewhere.
 | [gitkb](https://github.com/gitkb/gitkb-releases) | Call-graph code intelligence, and tasks that outlive a session. |
 
 Nothing here is vendored. one-shot links to them under their own licenses.
+
+## Execution benchmark
+
+The execution pilot compares completed work with and without an explicitly
+loaded skill. It checks real files and behavior, keeps the full traces, and
+reports cost and operator interruptions. Strategy labels do not earn points.
+
+The runnable benchmark lives in a separate local companion, `../one-shot-bench`,
+so installing this pack still ships only markdown. See
+[`benchmarks/execution.md`](benchmarks/execution.md) for the protocol, commands,
+and recorded results. The companion has not been published.
 
 ## License
 

@@ -4,7 +4,7 @@ description: "One shot a problem: choose how to attack it, take one approval, th
 license: Apache-2.0
 metadata:
   author: Orie Steele
-  version: "4.3.0"
+  version: "4.3.1"
   homepage: https://github.com/OR13/skills
 ---
 
