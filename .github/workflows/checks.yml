@@ -1,0 +1,89 @@
+name: checks
+
+# Static only: no API key, no secrets, no model, seconds to run. These assert
+# what the repo claims about itself and can be read straight off disk.
+#
+# Nothing here runs the skill. Behaviour is checked by running the evals
+# locally before a PR goes ready for review; see AGENTS.md.
+
+on:
+  pull_request:
+    paths:
+      - 'skills/**'
+      - '.claude-plugin/**'
+      - '.github/workflows/checks.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static:
+    name: static checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: The three versions agree
+        run: |
+          python3 - <<'V'
+          import json, re
+          a = json.load(open(".claude-plugin/plugin.json"))["version"]
+          b = json.load(open(".claude-plugin/marketplace.json"))["plugins"][0]["version"]
+          c = re.search(r'version: "(.*)"', open("skills/one-shot/SKILL.md").read()).group(1)
+          assert a == b == c, f"versions disagree: plugin.json={a} marketplace.json={b} SKILL.md={c}"
+          print("versions agree:", a)
+          V
+
+      - name: Nothing executable ships
+        run: |
+          test ! -e skills/one-shot/scripts
+          if find skills -type f ! -name '*.md' | grep .; then
+            echo "non-markdown file under skills/ — the README's security story says there are none"
+            exit 1
+          fi
+          echo "skills/ is markdown only"
+
+      - name: Frontmatter stays within the spec
+        run: |
+          python3 - <<'V'
+          import re, pathlib
+          allowed = {"name","description","license","compatibility","metadata","allowed-tools"}
+          for p in pathlib.Path("skills").glob("*/SKILL.md"):
+              m = re.match(r"---\n(.*?)\n---", p.read_text(), re.S)
+              assert m, f"{p}: no frontmatter"
+              keys = {l.split(":")[0] for l in m.group(1).splitlines()
+                      if l and not l.startswith((" ", "\t"))}
+              extra = keys - allowed
+              assert not extra, f"{p}: keys outside the spec: {sorted(extra)}"
+              assert "name" in keys and "description" in keys, f"{p}: missing name or description"
+              print(f"{p}: ok — {sorted(keys)}")
+          V
+
+      - name: Skill name matches its directory
+        run: |
+          python3 - <<'V'
+          import re, pathlib
+          for p in pathlib.Path("skills").glob("*/SKILL.md"):
+              name = re.search(r"^name: (.*)$", p.read_text(), re.M).group(1).strip()
+              assert name == p.parent.name, f"{p}: name '{name}' != directory '{p.parent.name}'"
+              print(f"{p.parent.name}: ok")
+          V
+
+      - name: SKILL.md stays under 500 lines
+        run: |
+          for f in skills/*/SKILL.md; do
+            n=$(wc -l < "$f")
+            test "$n" -lt 500 || { echo "$f is $n lines, ceiling is 500"; exit 1; }
+            echo "$f: $n lines"
+          done
+
+      - name: Every skill is listed in the README
+        run: |
+          for d in skills/*/; do
+            name=$(basename "$d")
+            grep -q "$name" README.md || { echo "$name is not mentioned in README.md"; exit 1; }
+            echo "$name: listed"
+          done
