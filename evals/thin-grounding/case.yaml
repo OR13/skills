@@ -5,20 +5,20 @@ execution:
   prompt: '(These files are not on disk in this session — treat the listing below as the repo.)
 
 
-    This library is meant to implement the W3C Verifiable Credentials Data Model
+    This library is meant to parse CSV the way RFC 4180 describes it, but it was
 
-    2.0, but it was started last month and I don''t trust that it conforms.
+    started last month and I don''t trust that it conforms.
 
 
     ```
 
-    src/issue.ts     issue(claims, key) -> spreads claims into a @context''d object
+    src/parse.ts     parse(text) -> splits on "\n", then on ","
 
-    src/verify.ts    verify(vc) -> returns true
+    src/stringify.ts stringify(rows) -> joins with "," and "\n"
 
-    src/types.ts     type VC = { "@context": string[]; type?: string[]; issuer?: string }
+    src/types.ts     type Row = string[]
 
-    README.md        one paragraph, links to the VCDM 2.0 spec
+    README.md        one paragraph, links to RFC 4180
 
     ```
 
@@ -31,6 +31,10 @@ execution:
     repo to review against and no spec of our own. Work out the approach and show me
 
     the brief you''d hand a reviewing agent. Don''t dispatch it yet.
+
+
+    Put the whole answer in your final message — the plan and every brief in one place, not spread across
+    earlier messages or a file.
 
     '
   max_turns: 15

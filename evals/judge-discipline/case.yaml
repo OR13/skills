@@ -33,6 +33,10 @@ execution:
 
     dispatch anything yet.
 
+
+    Put the whole answer in your final message — the plan and every brief in one place, not spread across
+    earlier messages or a file.
+
     '
   max_turns: 15
   allowed_tools:

@@ -52,7 +52,7 @@ writes to disk; the repositories are described in the prompt.
 |---|---|---|
 | `grounded-hunt-for` | a plan and worker briefs for a payments audit | failure modes tied to this repo's ADRs, tests and CI ceiling; the five fields; an explicit empty-state contract |
 | `judge-discipline` | a verification setup over four proposed diffs | at most two judges; the kill mandate; the dispatcher owning the merge; cold-start dispatch |
-| `thin-grounding` | a review brief for a repo with no tests, ADRs or CI | criteria falling back to the specification; an explicit empty-state contract |
+| `thin-grounding` | a review brief for a repo with no tests, ADRs or CI | criteria falling back to the specification the library implements; an explicit empty-state contract |
 
 ## Why the graders are regexes
 
@@ -69,6 +69,17 @@ all three went 0/3 to 3/3.
 
 `tool_used: Skill` confirms the skill fired at all. Without it a case can pass on
 the base model's own instincts and prove nothing about the skill.
+
+## Graders read the final message only
+
+Not the transcript. A case that lets the agent scatter its answer across several
+messages, or write it to a file, will fail graders that the work actually
+satisfied. Every prompt here therefore ends by asking for the whole answer in
+one final message, and a new case should do the same.
+
+This is not hypothetical: `grounded-hunt-for` passed 4 of 4 graders on one run
+and 2 of 4 on the next, with nothing changed but the roll of the dice, before
+that line was added.
 
 ## Known gaps
 

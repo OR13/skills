@@ -74,28 +74,23 @@ jobs:
           check skills/one-shot/references/dispatch.md "KILL or KEEP"
           echo "all constraints present"
 
-      - name: Graders still replay the recorded responses
+      - name: Grader unit tests
         run: |
           node -e '
           const fs=require("fs"),path=require("path");
-          const exp=JSON.parse(fs.readFileSync("evals/fixtures/expectations.json","utf8"));
+          const t=JSON.parse(fs.readFileSync("evals/grader-tests.json","utf8"));
           let bad=0,n=0;
-          for(const [c,graders] of Object.entries(exp)){
-            if(c.startsWith("_")) continue;
-            for(const [g,want] of Object.entries(graders)){
-              const txt=fs.readFileSync(path.join("evals",c,"graders",g+".md"),"utf8");
-              const pat=txt.match(/pattern: (.*)/)[1].trim().replace(/^'"'"'|'"'"'$/g,"");
-              const fl=(txt.match(/flags: (.*)/)||[,""])[1].trim();
-              let re; try{ re=new RegExp(pat,fl); }
-              catch(e){ console.log(`BAD REGEX ${c}/${g}: ${e.message}`); bad++; continue; }
-              for(const v of ["v4.3.0","v4.5.0"]){
-                const got=re.test(fs.readFileSync(path.join("evals/fixtures",v,c+".txt"),"utf8"));
-                n++;
-                if(got!==want[v]){ console.log(`MISMATCH ${c}/${g} ${v}: got ${got}, recorded ${want[v]}`); bad++; }
-              }
-            }
+          for(const [key,cases] of Object.entries(t)){
+            if(key.startsWith("_")) continue;
+            const [c,g]=key.split("/");
+            const md=fs.readFileSync(path.join("evals",c,"graders",g+".md"),"utf8");
+            const pat=md.match(/pattern: (.*)/)[1].trim().replace(/^.|.$/g,m=>m==="\u0027"?"":m);
+            const fl=(md.match(/flags: (.*)/)||[,""])[1].trim();
+            let re; try{ re=new RegExp(pat,fl); }
+            catch(e){ console.log(`BAD REGEX ${key}: ${e.message}`); bad++; continue; }
+            for(const s of cases.matches||[]){ n++; if(!re.test(s)){ console.log(`SHOULD MATCH ${key}: ${s.slice(0,70)}`); bad++; } }
+            for(const s of cases.rejects||[]){ n++; if(re.test(s)){ console.log(`SHOULD REJECT ${key}: ${s.slice(0,70)}`); bad++; } }
           }
           if(bad){ console.log(`${bad} problem(s)`); process.exit(1); }
-          console.log(`all ${n} grader/fixture pairs replay as recorded`);
+          console.log(`all ${n} grader assertions hold`);
           '
-

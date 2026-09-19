@@ -1,0 +1,79 @@
+{
+  "_comment": "Unit tests for the regex graders. Each grader must match every string in 'matches' and match none in 'rejects'. Quotes are shortened from real responses: matches from 4.5.0, rejects from 4.3.0, which is the version that lacked the behaviour. This catches a grader edited into something that always passes. It does not exercise the skill - only a local eval run does that.",
+  "grounded-hunt-for/grounded-in-artifacts": {
+    "matches": [
+      "Asserted at: docs/adr/0007-exactly-once-webhooks.md, tests/test_charge_idempotency.py, and the 45s ceiling in ci.yml"
+    ],
+    "rejects": [
+      "Check for race conditions, missing retries and unhandled errors across the payment paths."
+    ]
+  },
+  "grounded-hunt-for/five-fields": {
+    "matches": [
+      "**Scope.** Read src/payments/. **Hunt for.** TOCTOU on refund. **Must hold.** Zero files modified. **Return.** One finding per section."
+    ],
+    "rejects": [
+      "**Scope.** Read src/payments/. **Hunt for.** TOCTOU on refund. **Return.** One finding per section."
+    ]
+  },
+  "grounded-hunt-for/null-contract": {
+    "matches": [
+      "Return NO_FINDINGS_DETECTED if the path is already safe."
+    ],
+    "rejects": [
+      "Report anything you find."
+    ]
+  },
+  "judge-discipline/judge-cap": {
+    "matches": [
+      "Two judges, and never a third.",
+      "J1 reads the diff. J2 runs make test and reads what it emits."
+    ],
+    "rejects": [
+      "Scope: read all four patches plus the prior findings. Review no file in isolation.",
+      "One reviewer per diff, so R1 through R4, plus a seam reviewer."
+    ]
+  },
+  "judge-discipline/kill-mandate": {
+    "matches": [
+      "Each judge must name at least one finding to drop and say what breaks if that is wrong.",
+      "Verdict: KILL or KEEP, with the reason."
+    ],
+    "rejects": [
+      "Report every issue you find, ranked by severity."
+    ]
+  },
+  "judge-discipline/owned-merge": {
+    "matches": [
+      "I merge the returns myself and say which judge I overrode and why."
+    ],
+    "rejects": [
+      "The reviewers discuss their findings and agree a final list."
+    ]
+  },
+  "judge-discipline/cold-start": {
+    "matches": [
+      "Each judge is dispatched cold: the diff and its criteria, without the session that produced them."
+    ],
+    "rejects": [
+      "Hand the reviewer the workers' rationale so it understands the intent."
+    ]
+  },
+  "thin-grounding/spec-fallback": {
+    "matches": [
+      "Criteria come from RFC 4180, since the repo asserts nothing: quoted fields, embedded commas, CRLF line endings.",
+      "Check a quoted field containing an embedded newline round-trips."
+    ],
+    "rejects": [
+      "Review for naming, structure and error handling."
+    ]
+  },
+  "thin-grounding/null-contract": {
+    "matches": [
+      "If the library already conforms, return NO_FINDINGS_DETECTED."
+    ],
+    "rejects": [
+      "Summarise what you found."
+    ]
+  }
+}
