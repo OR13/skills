@@ -4,7 +4,7 @@ description: "One shot a problem: choose how to attack it, take one approval, th
 license: Apache-2.0
 metadata:
   author: Orie Steele
-  version: "4.3.0"
+  version: "4.4.0"
   homepage: https://github.com/OR13/skills
 ---
 
@@ -24,13 +24,27 @@ choice of approach matters more here than your care in executing it.
 
 ## Run
 
-### 1. Confirm it is one problem
+### 1. Confirm it is one problem, and that it is answerable
 
 Done when you can state the problem in one sentence with one finished state.
 
 Several problems: name each part, recommend which to one shot now, and say what
 the rest are waiting on. Then carry that one part into step 2. A recommendation
 is the deliverable here; handing back a list is not.
+
+Before going further, check the problem is the kind that can be finished at all.
+Three shapes cannot, and each wants a sentence back to the operator rather than
+a plan:
+
+- **No finished state.** "Make it faster", with no number and no measurement.
+  You cannot verify what you cannot define. Ask what would count as done.
+- **Not known to be possible.** The work is finding out whether something can be
+  done, not doing it. Say what question has to be answered first.
+- **Requirements that cannot both hold.** Write the conflict in one sentence and
+  ask which wins.
+
+A plan built on any of these is confident and wrong, which costs more than
+asking. This gate fires before step 2, not after it.
 
 ### 2. Choose the attack
 
@@ -44,6 +58,39 @@ without weighing the others, and that is the failure this skill exists to stop.
 - **Fan out to separate sessions.** One agent per subtask, isolated in its own
   git worktree.
 - **Straight through.** You do it yourself, now.
+
+Before committing to either fan-out, name what the subtasks share. Parallel
+workers are only independent if nothing they write collides: a generated file
+every one of them regenerates, a single migration sequence, a shared schema, a
+lockfile, one test fixture. If they touch anything in common, they are not
+independent, and running them at once produces a merge you will have to redo by
+hand. Sequence them instead, or do the shared part yourself first.
+
+Delegation is not free. Each worker costs a brief to write, a return to read and
+a merge to own, and it inherits none of what you already know. If you cannot say
+what running these at once buys — wall-clock on work that genuinely does not
+interact, or isolation for something that might hang — then it buys nothing, and
+straight through is the cheaper answer. Doing four small things yourself beats
+briefing four workers to do them.
+
+Thresholds, so the choice is not a feeling:
+
+| Independent units | Minutes each | Choose |
+|---|---|---|
+| 1 | any | straight through |
+| 2–3 | under 10 | straight through |
+| 2–3 | over 10 | fan out in-session |
+| 4 or more | under 5 | run one, then script the rest |
+| 4 or more | over 10 | fan out in-session, or separate sessions if the operator is away or one stalling must not block the rest |
+| any, but identical | any | run one, verify it, then script the rest |
+
+"Independent" means the dependency check above passed. "Minutes each" is the
+work, not the reading. A unit you cannot estimate is a unit you have not scoped,
+and scoping it yourself is step zero.
+
+Two more that override the table: if the same task repeats more than about ten
+times, it wants a script rather than workers; and if the operator has a skill
+that fits, it wants them, whatever the counts say.
 
 ### 3. Write the plan
 
@@ -84,8 +131,10 @@ the operator has to remember them unaided.** Planning skills are the common
 case, because an interactive workflow is exactly the kind a harness marks this
 way.
 
-At step 2, check whether the operator has any. Read the frontmatter of the
-installed skills with your ordinary file tools, looking for that field. Common
+At step 2, check whether the operator has any. This is the one thing in this
+routine you know that the model does not: what is installed on this machine is
+not in anyone's weights. Read the frontmatter of the installed skills with your
+ordinary file tools, looking for that field. Common
 locations are `~/.claude/skills`, `~/.claude/plugins`, `~/.codex/skills`,
 `~/.config/opencode/skills`, and a `.claude/skills` or `.agents/skills` folder
 in the project.
