@@ -1,12 +1,15 @@
 name: skill evals
 
-# Cost control, in order of how much they save:
-#   - paths filter: only runs when the skill, its evals, or the manifests change
-#   - runs: 1 per case (set in each case.yaml); raise locally when tuning
-#   - --ablation none: skips the no-plugin baseline arm, which would double the spend
-#   - concurrency: a new push cancels the previous run on the same branch
-# Three cases at one run each costs roughly $1.60 and takes about 8 minutes.
-# Grading is deterministic (regex + tool_used), so it adds nothing to that.
+# Two tiers.
+#
+# `static` runs on every PR. It needs no API key, no secrets and no model, and
+# finishes in seconds. It asserts the repo's invariants, that the skill still
+# states its load-bearing constraints, and that every grader still classifies
+# the recorded 4.3.0 and 4.5.0 responses the way it did when it was tuned.
+#
+# `live` actually runs the agent and costs about $1.60. It is manual, because
+# running it needs credentials this repo does not hold. Trigger it from the
+# Actions tab before cutting a release, or run the same command locally.
 
 on:
   pull_request:
@@ -16,26 +19,25 @@ on:
       - '.claude-plugin/**'
       - '.github/workflows/evals.yml'
   workflow_dispatch:
+    inputs:
+      live:
+        description: 'Also run the live agent evals (needs ANTHROPIC_API_KEY, ~$1.60)'
+        type: boolean
+        default: false
 
 concurrency:
   group: evals-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  evals:
+  static:
+    name: static checks (free, no model)
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-
-      - name: Install Claude Code
-        run: npm install -g @anthropic-ai/claude-code
-
-      - name: Check the three versions agree
+      - name: The three versions agree
         run: |
           python3 - <<'V'
           import json, re
@@ -46,28 +48,84 @@ jobs:
           print("versions agree:", a)
           V
 
-      - name: No executables ship here
-        run: test ! -e skills/one-shot/scripts
+      - name: Nothing executable ships
+        run: |
+          test ! -e skills/one-shot/scripts
+          ! find skills -type f ! -name '*.md' | grep . || { echo "non-markdown file under skills/"; exit 1; }
+
+      - name: Frontmatter stays within the spec
+        run: |
+          python3 - <<'V'
+          import re
+          fm = re.match(r"---\n(.*?)\n---", open("skills/one-shot/SKILL.md").read(), re.S).group(1)
+          keys = {l.split(":")[0] for l in fm.splitlines() if l and not l.startswith((" ", "\t"))}
+          allowed = {"name","description","license","compatibility","metadata","allowed-tools"}
+          extra = keys - allowed
+          assert not extra, f"frontmatter keys outside the spec: {extra}"
+          print("frontmatter ok:", sorted(keys))
+          V
 
       - name: SKILL.md stays under 500 lines
         run: test "$(wc -l < skills/one-shot/SKILL.md)" -lt 500
 
+      - name: The skill still states its load-bearing constraints
+        run: |
+          set -e
+          check() { grep -qiF "$2" "$1" || { echo "MISSING from $1: $2"; exit 1; }; }
+          check skills/one-shot/SKILL.md "Two judges at most"
+          check skills/one-shot/SKILL.md "Dispatch cold"
+          check skills/one-shot/SKILL.md "Kill, do not collect"
+          check skills/one-shot/SKILL.md "NO_FINDINGS_DETECTED"
+          check skills/one-shot/SKILL.md "where this repository asserts the property"
+          check skills/one-shot/references/dispatch.md "Asserted at"
+          check skills/one-shot/references/dispatch.md "KILL or KEEP"
+          echo "all constraints present"
+
+      - name: Graders still replay the recorded responses
+        run: |
+          node -e '
+          const fs=require("fs"),path=require("path");
+          const exp=JSON.parse(fs.readFileSync("evals/fixtures/expectations.json","utf8"));
+          let bad=0,n=0;
+          for(const [c,graders] of Object.entries(exp)){
+            if(c.startsWith("_")) continue;
+            for(const [g,want] of Object.entries(graders)){
+              const txt=fs.readFileSync(path.join("evals",c,"graders",g+".md"),"utf8");
+              const pat=txt.match(/pattern: (.*)/)[1].trim().replace(/^'"'"'|'"'"'$/g,"");
+              const fl=(txt.match(/flags: (.*)/)||[,""])[1].trim();
+              let re; try{ re=new RegExp(pat,fl); }
+              catch(e){ console.log(`BAD REGEX ${c}/${g}: ${e.message}`); bad++; continue; }
+              for(const v of ["v4.3.0","v4.5.0"]){
+                const got=re.test(fs.readFileSync(path.join("evals/fixtures",v,c+".txt"),"utf8"));
+                n++;
+                if(got!==want[v]){ console.log(`MISMATCH ${c}/${g} ${v}: got ${got}, recorded ${want[v]}`); bad++; }
+              }
+            }
+          }
+          if(bad){ console.log(`${bad} problem(s)`); process.exit(1); }
+          console.log(`all ${n} grader/fixture pairs replay as recorded`);
+          '
+
+  live:
+    name: live agent evals (costs money)
+    if: github.event_name == 'workflow_dispatch' && inputs.live
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install -g @anthropic-ai/claude-code
       - name: Run the eval gate
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          claude plugin eval . \
-            --eval-dir evals \
-            --tag ci \
-            --ablation none \
-            --trust-plugin \
-            --no-publish \
-            --threshold 1.0 \
-            --output-dir evals-results
-
-      - name: Upload the report
+          test -n "$ANTHROPIC_API_KEY" || { echo "no ANTHROPIC_API_KEY secret; run this locally instead"; exit 1; }
+          claude plugin eval . --eval-dir evals --tag ci --ablation none \
+            --trust-plugin --no-publish --threshold 1.0 --output-dir evals-results
+      - uses: actions/upload-artifact@v4
         if: always()
-        uses: actions/upload-artifact@v4
         with:
           name: eval-report
           path: evals-results/

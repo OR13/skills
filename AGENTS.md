@@ -50,9 +50,14 @@ asserted to match below.
 
 ## Verify a change
 
-CI runs the eval gate on any change to `skills/`, `evals/` or `.claude-plugin/`.
-It is a merge gate, so a change that degrades the skill's behaviour fails the PR.
-Run it locally before pushing if the change touches the skill body:
+CI runs free static checks on any change to `skills/`, `evals/` or
+`.claude-plugin/`: the version assertion below, markdown-only under `skills/`,
+frontmatter within the spec, the skill still stating its load-bearing
+constraints, and every grader still classifying the recorded fixtures as it did
+when tuned. No API key, no model.
+
+The live agent evals cost money and are manual. Run them locally before a
+release, or trigger the `live` job from the Actions tab:
 
 ```bash
 claude plugin eval . --eval-dir evals --tag ci --ablation none \
