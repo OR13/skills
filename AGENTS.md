@@ -56,8 +56,8 @@ frontmatter within the spec, the skill still stating its load-bearing
 constraints, and every grader still classifying the recorded fixtures as it did
 when tuned. No API key, no model.
 
-The live agent evals cost money and are manual. Run them locally before a
-release, or trigger the `live` job from the Actions tab:
+Those checks read the skill. They do not run it. Only the evals below do that,
+and they run on your machine:
 
 ```bash
 claude plugin eval . --eval-dir evals --tag ci --ablation none \
@@ -80,6 +80,38 @@ assert a == b == c, (a, b, c)
 print("versions agree:", a)
 V
 ```
+
+## Opening a PR
+
+**Open it as a draft.** The static checks tell you the skill still *says* the
+right things; they cannot tell you it still *does* them. Nothing in CI runs the
+agent, so a green tick on a draft means less than it looks like.
+
+Before you mark it ready for review:
+
+1. Run the evals locally, against the branch:
+
+   ```bash
+   claude plugin eval . --eval-dir evals --tag ci --ablation none \
+     --trust-plugin --no-publish --threshold 1.0
+   ```
+
+   About $1.60 and eight minutes, on whatever credentials your machine already
+   has. Use `--runs 3` when the change touches the skill body; one run hides
+   variance.
+
+2. Record what happened in [`evals/LAST_RUN.md`](evals/LAST_RUN.md): the
+   version, the date, each case's score, and anything that failed.
+
+3. Then mark it ready.
+
+A PR that changes `skills/` and leaves `LAST_RUN.md` pointing at an older
+version has not been tested, whatever CI says. Say so in review rather than
+approving it.
+
+If the evals fail, that is the answer. Do not mark it ready and explain the
+failure in the description; fix the change, or change the eval and say why it
+was wrong.
 
 ## Voice
 

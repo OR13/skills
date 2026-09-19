@@ -27,8 +27,11 @@ claude plugin eval . --eval-dir evals --tag ci --ablation none \
 
 Roughly $1.60 and eight minutes, and it uses whatever credentials the machine
 already has. Add `--runs 3` when tuning a grader; variance across runs is real
-and one run will not show it. In CI it is a manual `workflow_dispatch`, because
-it needs credentials this repo does not hold.
+and one run will not show it.
+
+This never runs in CI. Open PRs as draft, run this before marking one ready for
+review, and record the outcome in [`LAST_RUN.md`](LAST_RUN.md). `AGENTS.md` has
+the full routine.
 
 ## Why not a local model in CI
 

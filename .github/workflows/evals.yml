@@ -1,15 +1,13 @@
 name: skill evals
 
-# Two tiers.
+# Static only: no API key, no secrets, no model, seconds to run. It asserts the
+# repo's invariants, that the skill still states its load-bearing constraints,
+# and that every grader still classifies the recorded responses the way it did
+# when it was tuned.
 #
-# `static` runs on every PR. It needs no API key, no secrets and no model, and
-# finishes in seconds. It asserts the repo's invariants, that the skill still
-# states its load-bearing constraints, and that every grader still classifies
-# the recorded 4.3.0 and 4.5.0 responses the way it did when it was tuned.
-#
-# `live` actually runs the agent and costs about $1.60. It is manual, because
-# running it needs credentials this repo does not hold. Trigger it from the
-# Actions tab before cutting a release, or run the same command locally.
+# The live agent evals are deliberately not here. They run on your machine,
+# against your own credentials, before you mark a PR ready for review. See
+# AGENTS.md and evals/README.md.
 
 on:
   pull_request:
@@ -19,11 +17,6 @@ on:
       - '.claude-plugin/**'
       - '.github/workflows/evals.yml'
   workflow_dispatch:
-    inputs:
-      live:
-        description: 'Also run the live agent evals (needs ANTHROPIC_API_KEY, ~$1.60)'
-        type: boolean
-        default: false
 
 concurrency:
   group: evals-${{ github.ref }}
@@ -106,27 +99,3 @@ jobs:
           console.log(`all ${n} grader/fixture pairs replay as recorded`);
           '
 
-  live:
-    name: live agent evals (costs money)
-    if: github.event_name == 'workflow_dispatch' && inputs.live
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-      - run: npm install -g @anthropic-ai/claude-code
-      - name: Run the eval gate
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: |
-          test -n "$ANTHROPIC_API_KEY" || { echo "no ANTHROPIC_API_KEY secret; run this locally instead"; exit 1; }
-          claude plugin eval . --eval-dir evals --tag ci --ablation none \
-            --trust-plugin --no-publish --threshold 1.0 --output-dir evals-results
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: eval-report
-          path: evals-results/
-          retention-days: 14
