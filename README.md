@@ -79,14 +79,17 @@ A symlink means `git pull` in the clone updates every harness at once.
 
 ## What you are installing
 
-Two markdown files. No scripts, no install step, no network calls, nothing that
-runs on its own. Read both before you install; they are short, and skills run
-with your agent's full permissions, so reading them is the whole security model.
+Three markdown files. No scripts, no install step, no network calls, nothing
+that runs on its own. Read them before you install; they are short, and skills
+run with your agent's full permissions, so reading them is the whole security
+model.
 
 ```
 skills/one-shot/
-├── SKILL.md              the routine, ~110 lines
-└── references/packs.md   which packs are worth having
+├── SKILL.md                  the routine, ~175 lines
+└── references/
+    ├── dispatch.md           briefing workers, and the critic pass
+    └── packs.md              which packs are worth having
 ```
 
 ## Recommended skills

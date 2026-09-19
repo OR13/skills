@@ -4,7 +4,7 @@ description: "One shot a problem: choose how to attack it, take one approval, th
 license: Apache-2.0
 metadata:
   author: Orie Steele
-  version: "4.3.0"
+  version: "4.5.0"
   homepage: https://github.com/OR13/skills
 ---
 
@@ -110,9 +110,11 @@ invents. Structure every worker prompt around five fields:
 - **Scope.** Context and tool bounding. Define what it may read, what it may
   write, what it may call, and what is explicitly off limits.
 - **Hunt for.** Failure mode enumeration. Name the specific failure patterns
-  to find. A worker told to "audit error handling" greps for `catch` blocks; a
+  to find, and for each, where this repository asserts the property it
+  threatens. A worker told to "audit error handling" greps for `catch` blocks; a
   worker told to look for unhandled promise rejections, swallowed errors, and
-  missing retry ceilings must reason about code paths.
+  missing retry ceilings must reason about code paths. Criteria you look up beat
+  criteria you recall.
 - **Must hold.** Verifiable invariants and guardrails. State assertions that a
   check can falsify.
 - **Return.** Structured output schema. Define the exact markdown fields and an
@@ -122,11 +124,33 @@ invents. Structure every worker prompt around five fields:
   before dispatching concurrent workers.
 
 You cannot fill in **Hunt for** from a standing start. If you cannot name the
-failures, you are not ready to dispatch, and the fix is to read enough of the
-code yourself to name three.
+failures and point at what asserts them, you are not ready to dispatch, and the
+fix is to read enough of the code yourself to name three.
 
 Field detail, return schemas, and the critic pass:
 [`references/dispatch.md`](references/dispatch.md).
+
+## Judging the work
+
+When three or more workers propose changes, a judge reviews before you report.
+Below that, read the diffs yourself. Four constraints, not four suggestions:
+
+- **Two judges at most, ever.** Judges correlate. A third buys agreement rather
+  than coverage, and no aggregation rule recovers the difference.
+- **Two judges means two sources of evidence.** One reads the diff; the other
+  runs the system and reads what it emits. The same evidence with different
+  adjectives is one judge billed twice.
+- **Dispatch cold.** A judge gets the artifact and the criteria, never the
+  session that produced them. Work reviewed by the context that wrote it is
+  reviewed by its own reasoning.
+- **Kill, do not collect.** A judge names at least one finding to drop and what
+  breaks if that is wrong, or returns `NO_FINDINGS_DETECTED`. Volume, not
+  blindness, is what discredits a review.
+
+You merge the returns yourself and say which judge you overrode. Do not stage a
+debate between them; they converge on each other rather than on the answer.
+
+Judge briefs and the return schema: [`references/dispatch.md`](references/dispatch.md).
 
 ## When one shot is the wrong shape
 
