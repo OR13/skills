@@ -68,3 +68,54 @@ read-only preparation, preserved intent and authority, and outcome-based tests
 instead of scoring prompt length or formatting. Static package checks pass
 with its validator; versions agree at 5.0.0 and the skill remains Markdown-only.
 `skills-ref` is unavailable locally, so its validator was not run.
+
+## 5.0.1 candidate: evaluation stopped, release held
+
+The only skill revision asks for precise shared-file references instead of copied
+source, fixture data and whole contracts; task-proportional structure; and changed
+paths rather than full-file returns. The skill-creator guidance favored this narrow
+correction over adding another execution workflow. The tested candidate hash is
+`413026430e8f759f5dd7e832f2680488b001da6b2e88e7218ee813eb60d9108d`.
+
+The new synthetic smoke comparison passed all eight pipelines, with no measured
+quality advantage for 5.0.0 over direct execution or a generic improver. The
+companion then froze RELEASE-GATE.md before any candidate calls: compare 5.0.0
+with 5.0.1 on two task families, two repetitions each, alternating order, with a
+10% total pipeline cost reduction required and savings in both repetitions.
+
+| Paired pipelines | 5.0.0 | 5.0.1 candidate |
+|---|---:|---:|
+| Implementations passed | 4/4 | 4/4 |
+| Reported cost, both stages | $0.5345656 | $0.4938370 |
+| Total stage seconds | 211.56 | 190.62 |
+
+Observed cost savings were **7.619%**, present in both repetitions, but below the
+registered 10% release threshold. Pagination cost 24.3% less; retention cleanup
+cost 22.2% more. The candidate also passed missing-policy and conflicting-policy
+clarification probes and a single-file version update. All scope, isolation,
+runtime and resource checks passed, with zero rescue turns. The cost gate failed;
+its threshold has not been lowered after observing results.
+
+Source-based, unblinded review found no material candidate task/authority change
+or invented business decision. It still sometimes repeated contracts and requested
+full-file returns, so the concision guidance was only partially followed. One
+baseline prompt invented a confused double-fetch diagnosis; this is a diagnostic
+finding, not a substitute superiority measure. Independent blinded review was not
+performed, and this author review is not presented as an independent score.
+
+Total new evaluation: 19 pipelines, 32 Claude Code calls, **$2.0135056** reported.
+The same pinned model/effort as v2 was used. These are known synthetic families;
+the variant changes data, not the task distribution. This small pilot establishes
+neither statistical significance nor an advantage over direct/generic execution.
+
+The companion's RELEASE-RESULTS.md records the full decision and review. Tracked
+evidence/synthetic-smoke-v1/summary.json and evidence/release-501-v1/summary.json
+retain exact handoffs, grades, hashes and accounting. Raw traces and projects
+remain under runs/; no evidence was deleted. All 49 local tests pass, as do static
+package checks and the skill-creator validator. `skills-ref` remains unavailable.
+
+Experiments have stopped. The 5.0.1 candidate is held locally, with all three
+version fields synchronized. No remote push, PR, merge or release was performed.
+Shipping this smaller observed pilot gain requires an explicit operator decision
+to accept a result below the predeclared threshold; it must not be described as
+passing that gate.

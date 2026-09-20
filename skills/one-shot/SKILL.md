@@ -4,7 +4,7 @@ description: "Turns a simple request into a grounded, execution-ready prompt tha
 license: Apache-2.0
 metadata:
   author: Orie Steele
-  version: "5.0.0"
+  version: "5.0.1"
   homepage: https://github.com/OR13/skills
 ---
 
@@ -47,7 +47,14 @@ Include the original intent and enough context to act without reconstructing
 the operator's decisions. Use workspace-relative paths when the executor shares
 the project; include or arrange access to essential context otherwise.
 
-Cover what matters for this task, without forcing a fixed format:
+When the executor shares the project, prefer precise file and interface
+references over copying source, fixture data or whole contracts. Carry forward
+non-obvious invariants and resolved decisions; keep the original sources
+authoritative over your summary. Do not pre-solve the implementation or compute
+sample outputs merely to fill the prompt.
+
+Use only the structure the task needs; a small change may need one paragraph.
+Cover the relevant points below once, without turning them into required headings:
 
 - **Outcome:** the concrete deliverable and what is explicitly out of scope.
 - **Grounding:** relevant files, interfaces, observed behavior, source-of-truth
@@ -60,8 +67,9 @@ Cover what matters for this task, without forcing a fixed format:
 - **Execution latitude:** what the agent may investigate, decide and repair
   independently. Require it to report an unavailable prerequisite or new
   authority boundary rather than fabricate success or silently reduce scope.
-- **Return:** the resulting artifacts, verification actually performed, and
-  unresolved limitations. A plan or a worker's success claim is not delivery.
+- **Return:** changed paths, verification actually performed, and unresolved
+  limitations. Do not require full file contents when the operator can inspect
+  the artifacts. A plan or a worker's success claim is not delivery.
 
 Recommend an approach only when the context justifies it. A tightly coupled task
 may need direct work; separable work may benefit from workers. If coordination

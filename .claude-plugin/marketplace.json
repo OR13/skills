@@ -8,7 +8,7 @@
     {
       "name": "orie",
       "description": "Orie Steele's agent skills. one-shot: turn a simple request into a grounded prompt for autonomous execution.",
-      "version": "5.0.0",
+      "version": "5.0.1",
       "source": "./",
       "author": {
         "name": "Orie Steele"
