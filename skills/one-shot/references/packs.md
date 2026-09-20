@@ -1,7 +1,10 @@
 # Recommended packs
 
-Where one-shot routes to. None are vendored here; each links to its own repo
-under its own license.
+Optional capabilities an execution prompt may point to. None are vendored here;
+each links to its own repo under its own license. The inventory below is a
+discovery aid, not a current capability guarantee. Check installed documentation
+before carrying a workflow or command into the prompt. Prompt preparation does
+not authorize installing any of these packs.
 
 ## superpowers
 

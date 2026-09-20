@@ -7,8 +7,8 @@
   "plugins": [
     {
       "name": "orie",
-      "description": "Orie Steele's agent skills. one-shot: choose an approach, finish the task, and verify the outcome with minimal operator input.",
-      "version": "4.6.0",
+      "description": "Orie Steele's agent skills. one-shot: turn a simple request into a grounded prompt for autonomous execution.",
+      "version": "5.0.0",
       "source": "./",
       "author": {
         "name": "Orie Steele"

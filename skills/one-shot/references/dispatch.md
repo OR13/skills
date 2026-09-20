@@ -1,4 +1,8 @@
-# Brief and integrate workers
+# Prepare a prompt for coordinated execution
+
+Use this guide only when the final execution prompt needs worker coordination.
+The prompt builder does not launch implementation workers. Carry the relevant
+instructions below into the executor's handoff; omit them for direct work.
 
 Delegate a bounded result that is worth the coordination cost. Inspect enough
 of the task to identify useful work and its dependencies. A worker's context

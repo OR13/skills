@@ -1,101 +1,99 @@
 ---
 name: one-shot
-description: "Chooses an approach and carries one bounded task through implementation and verification with minimal operator input. Use when the operator asks to one-shot or handle a task end to end, delegates an outcome without prescribing the method, or needs a choice between direct work, workers, and an installed workflow. For a simple question or an already specified small edit, answer or act directly."
+description: "Turns a simple request into a grounded, execution-ready prompt that another agent can use to complete the task in one autonomous attempt. Use when the operator asks to develop a one-shot prompt, prepare a task for an agent, or make a rough request ready for autonomous execution. Producing the prompt does not itself authorize executing it."
 license: Apache-2.0
 metadata:
   author: Orie Steele
-  version: "4.6.0"
+  version: "5.0.0"
   homepage: https://github.com/OR13/skills
 ---
 
 # One-Shot
 
-Finish one agreed outcome with as little operator attention as it needs. Choose
-the approach, do the work, and verify the result. Aim for zero interruptions;
-combine missing decisions into one checkpoint when possible.
+Turn the operator's simple request into an execution-ready prompt. Do the
+context work that would otherwise require the operator to keep steering the
+executing agent. The deliverable is the prompt, not an implementation or a
+generic plan. More precise is useful; more elaborate is not necessarily better.
 
-One shot is one bounded attempt, including investigation and corrections. It
-does not mean one tool call, skipping tests, or promising success on any task.
-If asked only for a plan or review, that is the outcome; do not start execution.
+One shot means one autonomous execution attempt, including investigation,
+testing and corrections within that attempt. It is a target, not a guarantee.
 
-## Establish what done means
+## Ground the request
 
-Inspect the task's instructions, relevant artifacts, callers, and available
-checks before choosing the approach. Separate facts you can discover from
-decisions only the operator can make. Read the source of a requirement rather
-than replacing it with a familiar convention.
+Identify the requested outcome, existing authorization and scope. Inspect the
+relevant project instructions, artifacts, callers and checks with permitted
+read-only tools. Follow evidence far enough to locate the source of material
+requirements; do not scan unrelated projects or solve the task while preparing
+its prompt.
 
-Identify the requested result, what must keep working, and how to check both.
-For several related steps, keep a short completion checklist. Do not silently
-drop part of the requested outcome to make it easier to finish.
+Separate three kinds of uncertainty:
 
-Use reasonable, reversible defaults when they preserve the operator's intent.
-Ask when missing information or contradictory requirements materially change
-the result and cannot be resolved from the available context. Bundle those
-questions. Prior authorization still applies; a plan does not need another
-approval just because this skill produced it.
+- Facts available in the workspace: discover them and carry the relevant facts
+  or precise source locations into the prompt.
+- Reversible implementation choices: leave these to the executor unless the
+  operator or project requires a particular choice.
+- Missing decisions that materially change the outcome or authority: ask the
+  operator together. Do not invent a preference to make the prompt look ready.
 
-## Choose the approach
+When context is unavailable, say what is unknown. An execution prompt may direct
+the agent to inspect an available source; it must not describe an uninspected
+source as verified. If a decision is essential before work can proceed, return
+the questions and mark the prompt blocked instead of handing off a false start.
 
-Use the least coordination that can meet the outcome and constraints:
+## Develop the execution prompt
 
-- **Direct work:** a small task, tightly coupled changes, or work you can finish
-  more cheaply than you can brief and integrate workers.
-- **Workers in-session:** separable work where parallel progress or independent
-  checking justifies the extra context and review. Name ownership and dependencies
-  before dispatching.
-- **Separate sessions:** work that needs independent lifetimes or isolation and
-  a harness that supports them. Establish how results will be collected and
-  integrated before launching.
-- **An installed workflow:** a capability that fits better than doing the work
-  here. Invoke it when available and authorized; otherwise identify the exact
-  operator command from the installed documentation.
+Write for an agent in a fresh session. It will not inherit this conversation.
+Include the original intent and enough context to act without reconstructing
+the operator's decisions. Use workspace-relative paths when the executor shares
+the project; include or arrange access to essential context otherwise.
 
-Shared outputs need an owner. Parallelize independent preparation if useful,
-then sequence shared changes and integration. A shared generated file need not
-make every subtask serial. For repeated mechanical work, validate a representative
-case before applying the same transformation to the rest.
+Cover what matters for this task, without forcing a fixed format:
 
-For involved work, briefly state the outcome, chosen approach, checks, and any
-needed input. Keep this inline unless a plan file will help execution or handoff.
-Then proceed within the existing authorization.
+- **Outcome:** the concrete deliverable and what is explicitly out of scope.
+- **Grounding:** relevant files, interfaces, observed behavior, source-of-truth
+  requirements and resolved decisions. Distinguish facts from hypotheses.
+- **Constraints:** behavior to preserve, allowed changes, permissions and any
+  actual resource limits. Carry restrictions forward without expanding them.
+- **Completion evidence:** observable acceptance criteria and available checks,
+  including material failure paths and integration. Where coverage is missing,
+  ask for focused checks derived from requirements, not a test-count quota.
+- **Execution latitude:** what the agent may investigate, decide and repair
+  independently. Require it to report an unavailable prerequisite or new
+  authority boundary rather than fabricate success or silently reduce scope.
+- **Return:** the resulting artifacts, verification actually performed, and
+  unresolved limitations. A plan or a worker's success claim is not delivery.
 
-## Discover a workflow only when it helps
+Recommend an approach only when the context justifies it. A tightly coupled task
+may need direct work; separable work may benefit from workers. If coordination
+is material, read [references/dispatch.md](references/dispatch.md) and carry
+ownership, dependencies and integration checks into the prompt. Do not mandate
+workers merely to make a prompt look advanced.
 
-Use the harness's advertised capabilities and project instructions first. If the
-task suggests an installed but unavailable workflow, inspect the relevant local
-skill metadata or documentation with permitted tools. Some harnesses hide
-operator-only skills from the model's advertised list; absence there is not
-proof of absence on disk.
+Mention an installed workflow only after checking its actual availability and
+instructions. Optional [pack pointers](references/packs.md) are discovery leads,
+not proof that a tool exists. Never invent commands or require unrelated setup.
 
-Keep discovery scoped to a plausible location or capability. Do not scan every
-plugin directory for an unrelated task, invent a command, install a dependency,
-or retry a denied access path by another means. If a fitting workflow is not
-available, use the capabilities you have or state the specific missing input.
+## Check the handoff
 
-Optional pack pointers: [references/packs.md](references/packs.md). These are
-discovery leads, not evidence of what is installed or invocable here.
+Compare the draft against the original request and the inspected sources:
 
-## Execute, integrate, verify
+- Does it preserve the outcome, authorization and important existing behavior?
+- Are material requirements supported, and assumptions identified?
+- Can a fresh agent find the necessary artifacts and tell when it is done?
+- Have unresolved business choices been disguised as implementation details?
+- Does it prescribe unnecessary architecture, work or process?
 
-For delegated work, read [references/dispatch.md](references/dispatch.md) before
-writing the briefs. Keep task ownership until the returned work is integrated
-and checked; worker completion is not task completion.
+Remove unsupported requirements and repetition. Do not embed a speculative
+solution as a mandatory implementation. For a small request, a short prompt
+with the right context and checks can be sufficient.
 
-Work through the completion criteria. Run the relevant checks and inspect their
-actual results. Correct failures within scope without requiring the operator to
-steer each repair. If an approach stalls, investigate the cause before repeating
-it; change the approach when the evidence warrants it.
+Return one clearly delimited execution prompt, with any readiness limitation
+outside it. Follow a requested output format when provided. Do not claim the
+task passed verification merely because the prompt describes good checks.
 
-Check the integrated result against the original requirements, including
-relevant boundaries, failure paths and existing behavior. Passing an example or
-a narrow test is not evidence that untested requirements hold. Add focused
-checks when a material requirement has no coverage; do not weaken the contract
-or its tests to make a result pass. Review the final changes for scope and
-unintended edits before reporting.
-
-Finish with the delivered outcome, checks actually run, and remaining limitations.
-Distinguish a passing result from an untested claim. If completion needs new
-authority or an unavailable prerequisite, preserve useful progress and report
-the blocker. The one-checkpoint target never permits inventing an answer,
-bypassing a boundary, or concealing unfinished work.
+If the operator also requested execution, hand the finalized prompt to a fresh
+execution session when the harness supports it and authority permits. Preserve
+the prompt and verify the resulting artifacts separately. If a fresh session
+is unavailable, disclose that limitation before proceeding in the existing
+session; do not claim an isolated one-shot test. Prompt-only requests stop at
+the handoff and do not authorize code changes or external actions.

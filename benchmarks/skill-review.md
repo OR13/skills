@@ -1,5 +1,11 @@
 # One-shot 4.6.0 review
 
+Historical direct-execution experiment. The operator subsequently clarified that
+one-shot should develop a prompt for another agent, not primarily execute the
+task itself. Version 5.0.0 and [prompt-pipeline.md](prompt-pipeline.md) implement
+and test that purpose. The observations below remain intact, but do not validate
+prompt-development effectiveness.
+
 Reviewed and tested 2026-09-19. The revised skill meets the registered development
 rule against 4.3.0, but does not outperform the no-skill arm. The 4.3.0 baseline
 remains frozen in the companion benchmark's snapshots and tracked baseline.

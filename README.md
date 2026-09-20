@@ -4,38 +4,30 @@ Orie Steele's agent skills. One so far.
 
 ## one-shot
 
-**There are more good ways to point an agent at a problem than anyone has time
-to keep up with.** Fan out to subagents, or one worktree per task. Write a spec
-first, or tickets, or neither. Grill the plan before building. Test-drive it.
-Send it to a background session and read the summary later.
-
-Each of those is right sometimes. Knowing which is right *now* has quietly
-become a specialist skill, and it is not the skill most people are trying to
-practise. They have a problem and want it handled well the first time.
-
-one-shot is the skill that makes that choice. Give it a problem: it picks the
-approach, asks for missing decisions together when needed, and carries the work
-through verification.
+You know what you want, but turning it into a prompt an agent can finish without
+repeated correction takes work. one-shot does that preparation: give it a simple
+request, and it develops a grounded execution prompt using the available project
+context, requirements and checks.
 
 ## Why one shot
 
-Because the expensive failure is not a bad execution. It is a competent
-execution of the wrong approach: forty minutes of careful work in one session on
-something that wanted five parallel workers, or an elaborate fan-out for
-something that wanted one search.
-
-The name is the aim. One problem in, one considered attempt out, with no
-interruption when the agent has what it needs. Investigation and corrections
-are part of that attempt. A new blocker is reported, never concealed to keep
-the count down.
+The aim is one autonomous execution attempt from a well-prepared prompt.
+Investigation, testing and repairs can happen inside that attempt. Preparing
+the prompt may require a business decision from you; the skill does not invent
+one to make the handoff look ready. A longer prompt is not automatically better,
+and a ready prompt is not proof that the resulting implementation will work.
 
 ## What it does
 
-1. **Establishes the outcome** from your request and the relevant artifacts.
-2. **Chooses an approach** — direct work, workers in-session, separate sessions, or a fitting installed workflow.
-3. **Plans in proportion to the task**, with ownership for shared work and checks for completion.
-4. **Batches missing decisions** and proceeds under authorization already given.
-5. **Integrates and verifies**, correcting failures within scope and reporting remaining limitations.
+1. **Grounds the request** in relevant project instructions, artifacts and checks.
+2. **Resolves uncertainty** by discovering facts and batching essential questions.
+3. **Develops the prompt** with outcome, context, constraints and completion evidence.
+4. **Checks the handoff** for missing context, invented requirements and scope changes.
+5. **Returns the prompt**, or hands it to an executor if execution was also requested.
+
+For example: `/orie:one-shot turn "fix the retry bug" into an execution prompt`.
+The skill inspects the project to make that request actionable; it does not
+silently implement the fix. Prompt preparation and execution are separate stages.
 
 ## Install
 
@@ -87,23 +79,24 @@ with your agent's full permissions, so reading them is the whole security model.
 
 ```
 skills/one-shot/
-├── SKILL.md                 the routine
+├── SKILL.md                 developing and checking an execution prompt
 └── references/
-    ├── dispatch.md          briefing and reviewing workers
+    ├── dispatch.md          optional coordination instructions for the prompt
     └── packs.md             which packs are worth having
 ```
 
 ## Recommended skills
 
-one-shot is a router, and a router is worth more the better its destinations.
-None of these are required; without them it has less to point at.
+An execution prompt may reference a fitting installed workflow. None of these
+packs are required. Check actual local capabilities before naming a command;
+these links do not establish that a pack is installed or available.
 
 [`references/packs.md`](skills/one-shot/references/packs.md) covers what each
 adds and how to judge one you find elsewhere.
 
 | Pack | Why |
 |---|---|
-| [superpowers](https://github.com/obra/superpowers) | The execution skills. Install this first. |
+| [superpowers](https://github.com/obra/superpowers) | Optional execution workflows. |
 | [mattpocock-skills](https://github.com/anthropics/claude-plugins-official) | The planning flow, and most of it is invisible to your agent. |
 | [impeccable](https://github.com/pbakaus/impeccable) | Frontend design. UI projects only. |
 | [cmux-skills](https://github.com/manaflow-ai/cmux-skills) | Driving agents in panes you can watch. |
@@ -111,7 +104,16 @@ adds and how to judge one you find elsewhere.
 
 Nothing here is vendored. one-shot links to them under their own licenses.
 
-## Execution benchmark
+## Prompt pipeline benchmark
+
+Version 5.0.0 restores the intended purpose: simple request to execution-ready
+prompt. The companion compares direct execution, generic prompt improvement,
+and one-shot prompt development, followed by a fresh executor. Builders may
+inspect context but cannot implement. Only the generated prompt crosses the
+handoff; the executor starts from the original fixture. Both stages' costs
+count. See [benchmarks/prompt-pipeline.md](benchmarks/prompt-pipeline.md).
+
+## Earlier execution benchmark
 
 The execution pilot compares completed work with and without an explicitly
 loaded skill. It checks real files and behavior, keeps the full traces, and
@@ -124,8 +126,8 @@ and recorded results. The companion has not been published.
 
 The [4.6.0 review](benchmarks/skill-review.md) records the harder three-arm
 comparison: revised skill 12/12, original 10/12, no skill 12/12, plus 3/3 revised
-regressions. This supports a narrow improvement over the original, not an
-advantage over no skill or a general one-shot guarantee.
+regressions. Those experiments measured direct execution, not prompt development,
+and do not validate the purpose of 5.0.0 or establish an advantage over no skill.
 
 ## License
 

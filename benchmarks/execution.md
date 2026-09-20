@@ -1,5 +1,8 @@
 # Execution benchmark
 
+This is the historical direct-execution benchmark. For the prompt-development
+purpose introduced in 5.0.0, see [prompt-pipeline.md](prompt-pipeline.md).
+
 The benchmark runs Claude Code against real fixture files and grades the
 resulting artifacts outside the agent's workspace. It does not reward declaring
 an approach, copying a plan format, or merely claiming the skill was loaded.
