@@ -69,7 +69,7 @@ instead of scoring prompt length or formatting. Static package checks pass
 with its validator; versions agree at 5.0.0 and the skill remains Markdown-only.
 `skills-ref` is unavailable locally, so its validator was not run.
 
-## 5.0.1 candidate: evaluation stopped, release held
+## 5.0.1 evaluation: limited pilot gain
 
 The only skill revision asks for precise shared-file references instead of copied
 source, fixture data and whole contracts; task-proportional structure; and changed
@@ -111,11 +111,36 @@ neither statistical significance nor an advantage over direct/generic execution.
 The companion's RELEASE-RESULTS.md records the full decision and review. Tracked
 evidence/synthetic-smoke-v1/summary.json and evidence/release-501-v1/summary.json
 retain exact handoffs, grades, hashes and accounting. Raw traces and projects
-remain under runs/; no evidence was deleted. All 49 local tests pass, as do static
-package checks and the skill-creator validator. `skills-ref` remains unavailable.
+remain under runs/; no evidence was deleted. At evaluation time, all 49 local tests
+passed, as did static package checks and the skill-creator validator. `skills-ref`
+remains unavailable.
 
-Experiments have stopped. The 5.0.1 candidate is held locally, with all three
-version fields synchronized. No remote push, PR, merge or release was performed.
-Shipping this smaller observed pilot gain requires an explicit operator decision
-to accept a result below the predeclared threshold; it must not be described as
-passing that gate.
+## Release decision and security review
+
+Experiments stopped after the registered comparison and regression probes. The
+operator subsequently approved shipping the smaller measured gain, with its
+limitations stated, after a security review. This is an explicit acceptance of
+a result below the original threshold, not a claim that the 10% gate passed.
+
+Version 5.0.2 updates release documentation and synchronizes the three version
+fields. Its skill instructions and reference files are unchanged from the tested
+5.0.1 candidate; only SKILL.md's version metadata differs. No additional paid
+evaluation was run for this documentation-only update.
+
+Security review found no release-blocking issue in the Markdown-only skill:
+no executables, hooks, MCP registrations or added tool grants ship with it.
+Credential-pattern checks found no matches in the candidate tree or its four
+unmerged commits. This was a source review, not an adversarial prompt-injection
+test, a comprehensive secret scan, or an audit of linked third-party packs.
+
+The review found a cancellation defect in the separate, unpublished benchmark
+runner: interrupting its parent could leave Claude running. Companion commit
+`a61a565` fixes owned-process-group cleanup for interruption, termination signals,
+timeouts and exceptions. It preserves partial cost records, marks missing cost
+unknown, and stops further paid calls after unknown cost or reported overspending.
+All 63 local tests pass, including real local subprocess tests; no paid calls
+were used for that fix. The runner remains a trusted local tool, not a sandbox;
+parent SIGKILL and already-accepted provider requests remain limitations.
+
+The executable runner and its fixes are not included in this plugin. Prior
+protocols, recorded results and raw evidence remain intact in the companion.

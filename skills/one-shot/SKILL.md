@@ -4,7 +4,7 @@ description: "Turns a simple request into a grounded, execution-ready prompt tha
 license: Apache-2.0
 metadata:
   author: Orie Steele
-  version: "5.0.1"
+  version: "5.0.2"
   homepage: https://github.com/OR13/skills
 ---
 

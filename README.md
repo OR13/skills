@@ -113,11 +113,13 @@ inspect context but cannot implement. Only the generated prompt crosses the
 handoff; the executor starts from the original fixture. Both stages' costs
 count. See [benchmarks/prompt-pipeline.md](benchmarks/prompt-pipeline.md).
 
-The local 5.0.1 candidate keeps shared project context in file references and
-reduces repeated source/specification text. A repeated pilot passed all checks
-and cost 7.6% less than 5.0.0, below the registered 10% release threshold. The
-candidate is held for an operator decision, not released or claimed superior
-to direct execution. See the comparison and limitations in the benchmark note.
+Version 5.0.2 packages the evaluated 5.0.1 instructions without behavioral changes,
+with updated release notes and version metadata. The revision keeps shared project
+context in file references and reduces repeated source/specification text. A
+repeated pilot passed all task checks and cost 7.6% less than 5.0.0, below the
+registered 10% release threshold. The operator approved shipping this limited
+pilot gain; the failed threshold remains recorded. No advantage over direct
+execution or general reliability is claimed. See the benchmark note for details.
 
 ## Earlier execution benchmark
 
