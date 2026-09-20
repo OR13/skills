@@ -1,7 +1,7 @@
 {
   "name": "orie",
-  "description": "Orie Steele's agent skills. one-shot: choose how to attack a problem, take one approval, then run to the end.",
-  "version": "4.3.0",
+  "description": "Orie Steele's agent skills. one-shot: turn a simple request into a grounded prompt for autonomous execution.",
+  "version": "5.0.2",
   "author": {
     "name": "Orie Steele"
   },
@@ -10,9 +10,9 @@
   "license": "Apache-2.0",
   "keywords": [
     "skills",
-    "routing",
+    "prompting",
     "planning",
-    "orchestration",
+    "handoff",
     "agent-skills",
     "portable"
   ]

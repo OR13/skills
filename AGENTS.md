@@ -9,8 +9,9 @@ any [Agent Skills](https://agentskills.io) harness.
 ## What this repo is
 
 A skills pack, published as the plugin `orie` so its skills reach a session as
-`/orie:<name>`. One skill so far: `one-shot`, which chooses how to attack a
-problem instead of defaulting to doing it inline.
+`/orie:<name>`. One skill so far: `one-shot`, which develops a simple request
+into a grounded prompt for a fresh agent to execute autonomously. Prompt
+preparation is distinct from implementation.
 
 Adding a skill means one new directory under `skills/`, named the same as its
 `name:` field, and one row in the README. Nothing else.

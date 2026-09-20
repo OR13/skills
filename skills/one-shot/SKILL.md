@@ -1,152 +1,107 @@
 ---
 name: one-shot
-description: "One shot a problem: choose how to attack it, take one approval, then run to the end. Use when the operator describes a tangled problem instead of giving an instruction, asks how to approach or tackle something, says they are not sure which tool or pattern fits, or when the work spans many files, has no spec yet, or splits into independent parts."
+description: "Turns a simple request into a grounded, execution-ready prompt that another agent can use to complete the task in one autonomous attempt. Use when the operator asks to develop a one-shot prompt, prepare a task for an agent, or make a rough request ready for autonomous execution. Producing the prompt does not itself authorize executing it."
 license: Apache-2.0
 metadata:
   author: Orie Steele
-  version: "4.3.0"
+  version: "5.0.2"
   homepage: https://github.com/OR13/skills
 ---
 
 # One-Shot
 
-Take one problem. Choose how to attack it. Run one attempt that finishes it,
-spending at most **one stop** of the operator's attention.
+Turn the operator's simple request into an execution-ready prompt. Do the
+context work that would otherwise require the operator to keep steering the
+executing agent. The deliverable is the prompt, not an implementation or a
+generic plan. More precise is useful; more elaborate is not necessarily better.
 
-In prompt engineering, "one-shot" means providing a single demonstration
-example. In this skill, **one-shot execution** means single-checkpoint task
-delegation: choosing the approach, taking one approval gate, and running
-straight to completion without conversational thrash.
+One shot means one autonomous execution attempt, including investigation,
+testing and corrections within that attempt. It is a target, not a guarantee.
 
-The operator is not asking you to be careful. They are asking you to pick well,
-because picking well is now a specialist job they do not have time to do. Your
-choice of approach matters more here than your care in executing it.
+## Ground the request
 
-## Run
+Identify the requested outcome, existing authorization and scope. Inspect the
+relevant project instructions, artifacts, callers and checks with permitted
+read-only tools. Follow evidence far enough to locate the source of material
+requirements; do not scan unrelated projects or solve the task while preparing
+its prompt.
 
-### 1. Confirm it is one problem
+Separate three kinds of uncertainty:
 
-Done when you can state the problem in one sentence with one finished state.
+- Facts available in the workspace: discover them and carry the relevant facts
+  or precise source locations into the prompt.
+- Reversible implementation choices: leave these to the executor unless the
+  operator or project requires a particular choice.
+- Missing decisions that materially change the outcome or authority: ask the
+  operator together. Do not invent a preference to make the prompt look ready.
 
-Several problems: name each part, recommend which to one shot now, and say what
-the rest are waiting on. Then carry that one part into step 2. A recommendation
-is the deliverable here; handing back a list is not.
+When context is unavailable, say what is unknown. An execution prompt may direct
+the agent to inspect an available source; it must not describe an uninspected
+source as verified. If a decision is essential before work can proceed, return
+the questions and mark the prompt blocked instead of handing off a false start.
 
-### 2. Choose the attack
+## Develop the execution prompt
 
-Consider all four before committing. Most sessions default to the last one
-without weighing the others, and that is the failure this skill exists to stop.
+Write for an agent in a fresh session. It will not inherit this conversation.
+Include the original intent and enough context to act without reconstructing
+the operator's decisions. Use workspace-relative paths when the executor shares
+the project; include or arrange access to essential context otherwise.
 
-- **Hand back to the operator.** A skill exists that you cannot invoke. See
-  below.
-- **Fan out in-session.** Independent subtasks, using the harness's subagent or
-  workflow primitive. You review the results; the operator reads one summary.
-- **Fan out to separate sessions.** One agent per subtask, isolated in its own
-  git worktree.
-- **Straight through.** You do it yourself, now.
+When the executor shares the project, prefer precise file and interface
+references over copying source, fixture data or whole contracts. Carry forward
+non-obvious invariants and resolved decisions; keep the original sources
+authoritative over your summary. Do not pre-solve the implementation or compute
+sample outputs merely to fill the prompt.
 
-### 3. Write the plan
+Use only the structure the task needs; a small change may need one paragraph.
+Cover the relevant points below once, without turning them into required headings:
 
-Five lines, no more:
+- **Outcome:** the concrete deliverable and what is explicitly out of scope.
+- **Grounding:** relevant files, interfaces, observed behavior, source-of-truth
+  requirements and resolved decisions. Distinguish facts from hypotheses.
+- **Constraints:** behavior to preserve, allowed changes, permissions and any
+  actual resource limits. Carry restrictions forward without expanding them.
+- **Completion evidence:** observable acceptance criteria and available checks,
+  including material failure paths and integration. Where coverage is missing,
+  ask for focused checks derived from requirements, not a test-count quota.
+- **Execution latitude:** what the agent may investigate, decide and repair
+  independently. Require it to report an unavailable prerequisite or new
+  authority boundary rather than fabricate success or silently reduce scope.
+- **Return:** changed paths, verification actually performed, and unresolved
+  limitations. Do not require full file contents when the operator can inspect
+  the artifacts. A plan or a worker's success claim is not delivery.
 
-- **Problem** — the one sentence from step 1.
-- **Approach** — which of the four, and the one reason it beat the others.
-- **Steps** — what runs, in order or in parallel.
-- **Verification** — how the result gets checked, and by whom. Name a check
-  that can fail, like a test command or assertion.
-- **Operator input** — anything only the operator can type, or nothing.
+Recommend an approach only when the context justifies it. A tightly coupled task
+may need direct work; separable work may benefit from workers. If coordination
+is material, read [references/dispatch.md](references/dispatch.md) and carry
+ownership, dependencies and integration checks into the prompt. Do not mandate
+workers merely to make a prompt look advanced.
 
-### 4. Take the stop, once
+Mention an installed workflow only after checking its actual availability and
+instructions. Optional [pack pointers](references/packs.md) are discovery leads,
+not proof that a tool exists. Never invent commands or require unrelated setup.
 
-Five minutes to write a plan is worth thirty minutes of wasted work. Stop, show
-the plan, and ask for one approval:
+## Check the handoff
 
-> `plan.md` is ready. Shall I execute it?
+Compare the draft against the original request and the inspected sources:
 
-Do not start until the operator answers. If they ask for changes, update the
-plan and ask once more. If they approve, proceed immediately without further
-stops.
+- Does it preserve the outcome, authorization and important existing behavior?
+- Are material requirements supported, and assumptions identified?
+- Can a fresh agent find the necessary artifacts and tell when it is done?
+- Have unresolved business choices been disguised as implementation details?
+- Does it prescribe unnecessary architecture, work or process?
 
-### 5. Execute and report
+Remove unsupported requirements and repetition. Do not embed a speculative
+solution as a mandatory implementation. For a small request, a short prompt
+with the right context and checks can be sufficient.
 
-Execute the plan, verify as planned, and report once when finished. Done when
-every step has run and the verification has passed.
+Return one clearly delimited execution prompt, with any readiness limitation
+outside it. Follow a requested output format when provided. Do not claim the
+task passed verification merely because the prompt describes good checks.
 
-When using either fan-out approach, write each worker's brief before dispatching
-any of them. See below.
-
-## Skills you cannot invoke
-
-Some harnesses let a skill opt out of model invocation, so the agent never sees
-its description. Claude Code spells this `disable-model-invocation: true`. The
-consequence is quiet and worth stating plainly: **you cannot suggest these, and
-the operator has to remember them unaided.** Planning skills are the common
-case, because an interactive workflow is exactly the kind a harness marks this
-way.
-
-At step 2, check whether the operator has any. Read the frontmatter of the
-installed skills with your ordinary file tools, looking for that field. Common
-locations are `~/.claude/skills`, `~/.claude/plugins`, `~/.codex/skills`,
-`~/.config/opencode/skills`, and a `.claude/skills` or `.agents/skills` folder
-in the project.
-
-A hidden skill whose description matches the problem goes in the plan's
-**Operator input** line, with the exact command to type. Then wait: running the
-work yourself when a better tool was one keystroke away is the outcome to avoid.
-
-[`references/packs.md`](references/packs.md) lists which packs ship them.
-
-## Choosing between the two fan-outs
-
-Default to in-session. Separate sessions cost the operator a thing to watch, so
-spend that only when the work runs tens of minutes, when they want to follow it
-on their own schedule, or when one stuck worker must not freeze the rest.
-
-## Briefing a worker
-
-A worker inherits none of your session. Whatever you leave out of its brief, it
-invents. Structure every worker prompt around five fields:
-
-- **Scope.** Context and tool bounding. Define what it may read, what it may
-  write, what it may call, and what is explicitly off limits.
-- **Hunt for.** Failure mode enumeration. Name the specific failure patterns
-  to find. A worker told to "audit error handling" greps for `catch` blocks; a
-  worker told to look for unhandled promise rejections, swallowed errors, and
-  missing retry ceilings must reason about code paths.
-- **Must hold.** Verifiable invariants and guardrails. State assertions that a
-  check can falsify.
-- **Return.** Structured output schema. Define the exact markdown fields and an
-  explicit empty-state response (e.g. `NO_FINDINGS_DETECTED`) to prevent
-  hallucinated findings.
-- **Order.** Execution topology and dependency staging. Settle phase sequence
-  before dispatching concurrent workers.
-
-You cannot fill in **Hunt for** from a standing start. If you cannot name the
-failures, you are not ready to dispatch, and the fix is to read enough of the
-code yourself to name three.
-
-Field detail, return schemas, and the critic pass:
-[`references/dispatch.md`](references/dispatch.md).
-
-## When one shot is the wrong shape
-
-- **Contradictory requirements.** Two specs that cannot both hold. Write the
-  conflict down in one sentence and ask the operator which wins before
-  planning.
-- **Novel research.** When the work is finding out what is true rather than
-  applying what is known. State what question needs answering first.
-- **Tasks that are really loops.** "Do this for each repo in the org." Run one,
-  verify it, and only then script the loop.
-
-Three runs at the same task means the task wants a tool. Say so once the run is
-finished, rather than turning this one into that.
-
-For a fan-out, that tool is an agent definition: the same five fields written to
-a file the harness loads, instead of retyped into a prompt each time. Lifespan is
-the difference that matters. A brief is discarded, while a definition gets read,
-edited, and maintained.
-
-Repetition triggers a definition. Defining an agent for a one-off task creates
-maintenance overhead without reuse. Writing one:
-[`references/dispatch.md`](references/dispatch.md).
-
+If the operator also requested execution, hand the finalized prompt to a fresh
+execution session when the harness supports it and authority permits. Preserve
+the prompt and verify the resulting artifacts separately. If a fresh session
+is unavailable, disclose that limitation before proceeding in the existing
+session; do not claim an isolated one-shot test. Prompt-only requests stop at
+the handoff and do not authorize code changes or external actions.
